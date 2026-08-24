@@ -18,7 +18,7 @@ import java.util.Set;
 @Table(name = "coupons")
 public class Coupon {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "coupon_id")
     private Long id;
 

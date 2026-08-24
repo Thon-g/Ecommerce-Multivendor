@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "address")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     private Long id;
 
     @Column(name = "name", nullable = false, columnDefinition = "VARCHAR(20)")

@@ -12,7 +12,7 @@ import lombok.*;
 @Table(name = "verification_codes")
 public class VerificationCode {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "verification_code_id")
     private Long id;
 

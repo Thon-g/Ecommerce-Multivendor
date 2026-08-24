@@ -13,7 +13,7 @@ import lombok.*;
 @Table(name = "home_categories")
 public class HomeCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "home_category_id")
     private Long id;
 

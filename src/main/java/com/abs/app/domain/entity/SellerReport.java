@@ -11,7 +11,7 @@ import lombok.*;
 @Table(name = "seller_reports")
 public class SellerReport {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "seller_report_id")
     private Long id;
 

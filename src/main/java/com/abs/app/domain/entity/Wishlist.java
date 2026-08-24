@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "wishlists")
 public class Wishlist {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "wishlist_id")
     private Long id;
 

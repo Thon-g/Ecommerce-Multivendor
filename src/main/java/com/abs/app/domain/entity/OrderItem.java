@@ -13,7 +13,7 @@ import lombok.*;
 @Table(name = "order_items")
 public class OrderItem {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "order_item_id")
     private Long id;
 

@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "payment_orders")
 public class PaymentOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Đổi từ AUTO sang IDENTITY
     @Column(name = "payment_order_id")
     private Long id;
 
