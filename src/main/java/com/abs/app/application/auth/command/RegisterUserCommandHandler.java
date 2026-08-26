@@ -6,9 +6,11 @@ import com.abs.app.common.constant.RoleConstant;
 import com.abs.app.common.exception.DuplicateResourceException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.util.GenerateIdUtil;
+import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.Role;
 import com.abs.app.domain.entity.User;
 import com.abs.app.domain.entity.enums.RoleUser;
+import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.RoleRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.infrastructure.security.JwtTokenProvider;
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 public class RegisterUserCommandHandler {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CartRepository cartRepository ;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -44,6 +47,10 @@ public class RegisterUserCommandHandler {
         newUser.setUpdateAt(LocalDateTime.now());
         newUser.setRole(role);
         userRepository.save(newUser);
+
+        Cart newCart = new Cart();
+        newCart.setUser(newUser);
+        cartRepository.save(newCart);
 
         String accessToken = jwtTokenProvider.generateAccessToken(newUser.getUserId(), newUser.getRole().getRoleName().toString());
 
