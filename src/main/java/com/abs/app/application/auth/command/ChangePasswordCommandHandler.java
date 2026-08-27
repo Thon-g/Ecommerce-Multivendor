@@ -36,6 +36,8 @@ public class ChangePasswordCommandHandler {
         userRepo.save(user);
         String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(),
                 user.getRole().getRoleName().toString());
-        return new AuthResponseDto(accessToken, null);
+        return AuthResponseDto.builder()
+                .accessToken(accessToken)
+                .build();
     }
 }

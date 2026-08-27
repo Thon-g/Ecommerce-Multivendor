@@ -59,7 +59,10 @@ public class RefreshTokenCommandHandler {
 
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId);
         refreshTokenService.save(userId, newRefreshToken, refreshTokenExpirationMinutes());
-        return new AuthResponseDto(newAccessToken, newRefreshToken);
+        return AuthResponseDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
 
     private long refreshTokenExpirationMinutes() {
