@@ -3,6 +3,7 @@ package com.abs.app.application.auth.command;
 import com.abs.app.application.auth.dto.AuthResponseDto;
 import com.abs.app.common.constant.AuthConstant;
 import com.abs.app.common.constant.RoleConstant;
+import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.DuplicateResourceException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.util.GenerateIdUtil;
@@ -13,6 +14,7 @@ import com.abs.app.domain.entity.enums.RoleUser;
 import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.RoleRepository;
 import com.abs.app.domain.repository.UserRepository;
+import com.abs.app.domain.service.OtpTokenService;
 import com.abs.app.infrastructure.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,10 +30,15 @@ public class RegisterUserCommandHandler {
     private final CartRepository cartRepository ;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final OtpTokenService otpTokenService;
 
     public AuthResponseDto handle(RegisterUserCommand command) {
-        if(userRepository.existsByEmail(command.getEmail())) {
+        if (userRepository.existsByEmail(command.getEmail())) {
             throw new DuplicateResourceException(AuthConstant.EMAIL_EXIST);
+        }
+
+        if (!otpTokenService.isEmailVerified(command.getEmail())) {
+            throw new BusinessException(AuthConstant.EMAIL_NOT_VERIFIED);
         }
 
         Role role = roleRepository.findByRoleName(RoleUser.CUSTOMER)
@@ -47,6 +54,7 @@ public class RegisterUserCommandHandler {
         newUser.setUpdateAt(LocalDateTime.now());
         newUser.setRole(role);
         userRepository.save(newUser);
+        otpTokenService.invalidateEmailVerified(command.getEmail());
 
         Cart newCart = new Cart();
         newCart.setUser(newUser);
