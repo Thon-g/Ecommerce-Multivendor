@@ -52,7 +52,7 @@ public class RegisterUserCommandHandler {
         newUser.setFirstName(command.getFirstName());
         newUser.setLastName(command.getLastName());
         newUser.setUpdateAt(LocalDateTime.now());
-        newUser.setRole(role);
+        newUser.getRoles().add(role);
         userRepository.save(newUser);
         otpTokenService.invalidateEmailVerified(command.getEmail());
 
@@ -60,7 +60,11 @@ public class RegisterUserCommandHandler {
         newCart.setUser(newUser);
         cartRepository.save(newCart);
 
-        String accessToken = jwtTokenProvider.generateAccessToken(newUser.getUserId(), newUser.getRole().getRoleName().toString());
+        String roleStr = newUser.getRoles().stream()
+                .findFirst()
+                .map(r -> r.getRoleName().toString())
+                .orElse("CUSTOMER");
+        String accessToken = jwtTokenProvider.generateAccessToken(newUser.getUserId(), roleStr);
 
         return AuthResponseDto.builder()
                 .accessToken(accessToken)
