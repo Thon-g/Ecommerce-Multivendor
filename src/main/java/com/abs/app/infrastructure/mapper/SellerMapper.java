@@ -8,7 +8,7 @@ import com.abs.app.domain.entity.BankDetails;
 import com.abs.app.domain.entity.BusinessDetails;
 import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.entity.User;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,6 +39,7 @@ public class SellerMapper {
         Seller seller = new Seller();
         seller.setSellerId(sellerId);
         seller.setUser(user);
+        seller.setShopName(command.getBusinessName());
         
         BusinessDetails businessDetails = new BusinessDetails();
         businessDetails.setBusinessName(command.getBusinessName());
@@ -64,7 +65,7 @@ public class SellerMapper {
         seller.setPickupAddress(pickupAddress);
         
         seller.setGstin(command.getGstin());
-        seller.setSellerStatus(AccountStatus.PENDING_VERIFICATION);
+        seller.setStatus(SellerStatus.PENDING_VERIFICATION);
         
         return seller;
     }
@@ -80,7 +81,7 @@ public class SellerMapper {
                 .businessEmail(seller.getBusinessDetails() != null ? seller.getBusinessDetails().getBusinessEmail() : null)
                 .businessPhone(seller.getBusinessDetails() != null ? seller.getBusinessDetails().getBusinessPhone() : null)
                 .gstin(seller.getGstin())
-                .sellerStatus(seller.getSellerStatus())
+                .status(seller.getStatus())
                 .build();
     }
 }

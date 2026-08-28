@@ -34,8 +34,11 @@ public class ChangePasswordCommandHandler {
         }
         user.setPassword(passwordEncoder.encode(command.getNewPassword()));
         userRepo.save(user);
-        String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(),
-                user.getRole().getRoleName().toString());
+        String roleStr = user.getRoles().stream()
+                .findFirst()
+                .map(role -> role.getRoleName().toString())
+                .orElse("CUSTOMER");
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), roleStr);
         return AuthResponseDto.builder()
                 .accessToken(accessToken)
                 .build();
