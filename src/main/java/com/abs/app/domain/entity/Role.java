@@ -1,6 +1,7 @@
 package com.abs.app.domain.entity;
 
 import com.abs.app.domain.entity.enums.RoleUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RoleUser roleName = RoleUser.CUSTOMER;
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "roles")
+    @JsonIgnore
     private List<User> users;
 }
