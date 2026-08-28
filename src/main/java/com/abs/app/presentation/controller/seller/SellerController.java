@@ -7,9 +7,6 @@ import com.abs.app.application.seller.dto.SellerResponseDto;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.infrastructure.mapper.SellerMapper;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/seller")
 @RequiredArgsConstructor
-@Tag(name = "Seller", description = "Seller Onboarding & Management APIs")
-@SecurityRequirement(name = "bearerAuth")
 public class SellerController {
 
     private final RegisterSellerCommandHandler registerSellerCommandHandler;
     private final SellerMapper sellerMapper;
 
-    @Operation(summary = "Đăng ký mở gian hàng", description = "Gửi thông tin gian hàng để chờ Admin phê duyệt. Mỗi tài khoản chỉ được mở 1 gian hàng.")
     @PostMapping("/register")
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<SellerResponseDto>> registerSeller(@Valid @RequestBody RegisterSellerRequestDto request) {
