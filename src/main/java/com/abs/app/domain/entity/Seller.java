@@ -11,22 +11,24 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "sellers")
 public class Seller {
+
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "seller_id", nullable = false, unique = true)
     private String sellerId;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     @Column(name = "shop_name", nullable = false, columnDefinition = "VARCHAR(100)")
     private String shopName;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pickup_address_id")
     private Address pickupAddress;
 
@@ -41,7 +43,7 @@ public class Seller {
     private BankDetails bankDetails = new BankDetails();
 
     @Column(name = "gstin", columnDefinition = "VARCHAR(20)")
-    private String GSTIN;
+    private String gstin;
 
     @OneToMany(mappedBy = "seller")
     private Set<Product> products = new HashSet<>();
