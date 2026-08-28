@@ -41,6 +41,9 @@ public class User {
     @Column(name = "phone_number", nullable = true, columnDefinition = "VARCHAR(20)")
     private String phoneNumber;
 
+    @Column(name = "picture", nullable = true, columnDefinition = "TEXT")
+    private String picture;
+
     @Column(name = "is_receive_email")
     private boolean isReceiveEmail = false;
 
