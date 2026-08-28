@@ -1,6 +1,6 @@
 package com.abs.app.domain.entity;
 
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,7 +32,7 @@ public class Seller {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AccountStatus status = AccountStatus.PENDING_VERIFICATION;
+    private SellerStatus status = SellerStatus.PENDING_VERIFICATION;
 
     @Embedded
     private BusinessDetails businessDetails = new BusinessDetails();

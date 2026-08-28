@@ -1,6 +1,6 @@
 package com.abs.app.domain.entity;
 
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -55,7 +55,7 @@ public class User {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AccountStatus status = AccountStatus.ACTIVE;
+    private UserStatus status = UserStatus.ACTIVE;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
