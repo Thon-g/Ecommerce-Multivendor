@@ -8,25 +8,19 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "sellers")
 public class Seller {
+
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "seller_id", nullable = false, unique = true)
     private String sellerId;
 
-    @Column(name = "seller_name", nullable = false, columnDefinition = "VARCHAR(100)")
-    private String sellerName;
-
-    @Column(name = "phone", columnDefinition = "VARCHAR(20)")
-    private String phone;
-
-    @Column(name = "email", unique = true, nullable = false, columnDefinition = "VARCHAR(100)")
-    private String email;
-
-    @Column(name = "password", nullable = false)
-    private String password;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
     @Embedded
     private BusinessDetails businessDetails = new BusinessDetails();
@@ -34,21 +28,14 @@ public class Seller {
     @Embedded
     private BankDetails bankDetails = new BankDetails();
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pickup_address_id")
-    private Address pickupAddress = new Address();
+    private Address pickupAddress;
 
     @Column(name = "gstin", columnDefinition = "VARCHAR(20)")
-    private String GSTIN;
+    private String gstin;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Role role = new Role();
-
-    @Column(name = "is_email_verified", nullable = false)
-    private boolean isEmailVerified = false;
-
-    @Column(name = "user_status", nullable = false)
+    @Column(name = "seller_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private AccountStatus userStatus = AccountStatus.PENDING_VERIFICATION;
+    private AccountStatus sellerStatus = AccountStatus.PENDING_VERIFICATION;
 }

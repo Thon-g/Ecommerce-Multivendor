@@ -1,6 +1,6 @@
 package com.abs.app.infrastructure.security;
-import com.abs.app.common.constant.AuthConstant;
 
+import com.abs.app.common.constant.AuthConstant;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/v3/api-docs")
                 || path.startsWith("/swagger-resources")
                 || path.startsWith("/webjars");
-
         log.debug("shouldNotFilter? path='{}' -> {}", path, skip);
         return skip;
     }
@@ -49,20 +48,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath().toLowerCase();
         log.debug("doFilterInternal start for path='{}'", path);
 
-        // extra safety
         if (isPublicAuthPath(path)
                 || path.startsWith("/public/")
                 || path.startsWith("/images/")
                 || path.startsWith("/swagger-ui")
                 || path.startsWith("/v3/api-docs")) {
-            log.debug("Skipping JWT processing for swagger/auth path '{}'", path);
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = resolveToken(request);
-
-        // NO TOKEN -> allow through
         if (token == null) {
             filterChain.doFilter(request, response);
             return;
@@ -71,10 +66,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if (jwtTokenProvider.validateAccessToken(token)) {
                 String userId = jwtTokenProvider.getUserIdFromAccessToken(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
+                String sellerId = jwtTokenProvider.getSellerId(token);
+
+                UserDetails userDetails = (sellerId != null)
+                        ? userDetailsService.loadUserByUsernameWithSellerId(userId, sellerId)
+                        : userDetailsService.loadUserByUsername(userId);
 
                 if (!isActiveUser(userDetails)) {
-                    log.debug("Authenticated token belongs to an inactive userId='{}'", userId);
+                    log.debug("Inactive user: userId='{}'", userId);
                     SecurityContextHolder.clearContext();
                     writeUnauthorizedResponse(response, AuthConstant.PROHIBIT_ACCOUNT_MESSAGE);
                     return;
@@ -82,7 +81,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -94,7 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         } catch (Exception e) {
-            log.error("JWT error while processing request to '{}': {}", path, e.getMessage(), e);
+            log.error("JWT error for path='{}': {}", path, e.getMessage(), e);
             SecurityContextHolder.clearContext();
             writeUnauthorizedResponse(response, AuthConstant.INVALID_TOKEN);
             return;
@@ -105,23 +103,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private String resolveToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        log.trace("Authorization header: {}", authHeader);
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
-
         Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            return null;
-        }
-
+        if (cookies == null) return null;
         for (Cookie cookie : cookies) {
             if ("accessToken".equals(cookie.getName()) && cookie.getValue() != null && !cookie.getValue().isBlank()) {
                 return cookie.getValue();
             }
         }
-
         return null;
     }
 
@@ -133,25 +124,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void writeUnauthorizedResponse(HttpServletResponse response, String message) throws IOException {
-        if (response.isCommitted()) {
-            return;
-        }
-
+        if (response.isCommitted()) return;
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(JSON_CONTENT_TYPE);
         response.getWriter().write(String.format(
-                "{\"success\":false,\"message\":\"%s\",\"data\":null}",
-                escapeJson(message)));
+                "{\"success\":false,\"message\":\"%s\",\"data\":null}", escapeJson(message)));
     }
 
     private String escapeJson(String value) {
-        if (value == null) {
-            return "";
-        }
-
-        return value
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"");
+        if (value == null) return "";
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     private boolean isPublicAuthPath(String path) {

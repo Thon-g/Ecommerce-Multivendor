@@ -33,24 +33,22 @@ public class SecurityUtils {
         return principal != null ? principal.getUserName() : null;
     }
 
+    public static String getCurrentSellerId() {
+        CustomUserPrincipal principal = getCurrentUserPrincipal();
+        return principal != null ? principal.getSellerId() : null;
+    }
+
     public static CustomUserPrincipal getCurrentUserPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
-
         Object principal = authentication.getPrincipal();
         if (principal instanceof CustomUserPrincipal customUserPrincipal) {
             return customUserPrincipal;
         }
-
         log.debug("Principal is not CustomUserPrincipal: {}", principal.getClass().getSimpleName());
         return null;
-    }
-
-    @Deprecated
-    public static String getCurrentUsernameOld() {
-        return getCurrentUserId();
     }
 
     public static boolean hasRole(String roleName) {
@@ -58,7 +56,6 @@ public class SecurityUtils {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
-
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         return authorities.stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_" + roleName));
