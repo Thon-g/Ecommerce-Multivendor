@@ -1,4 +1,4 @@
-package com.abs.app.application.seller.mapper;
+package com.abs.app.infrastructure.mapper;
 
 import com.abs.app.application.seller.command.RegisterSellerCommand;
 import com.abs.app.domain.entity.Address;

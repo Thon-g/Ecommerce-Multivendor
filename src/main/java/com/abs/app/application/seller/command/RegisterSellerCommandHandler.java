@@ -1,6 +1,6 @@
 package com.abs.app.application.seller.command;
 
-import com.abs.app.application.seller.mapper.SellerMapper;
+import com.abs.app.infrastructure.mapper.SellerMapper;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
