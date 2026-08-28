@@ -1,13 +1,13 @@
 package com.abs.app.infrastructure.security;
 
 import com.abs.app.domain.entity.User;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class CustomUserPrincipal implements UserDetails {
 
@@ -15,7 +15,7 @@ public class CustomUserPrincipal implements UserDetails {
     private final String userName;
     private final String email;
     private final String password;
-    private final AccountStatus status;
+    private final UserStatus status;
     private final Collection<? extends GrantedAuthority> authorities;
     private final String sellerId;
 
@@ -30,8 +30,9 @@ public class CustomUserPrincipal implements UserDetails {
         this.password = user.getPassword();
         this.status = user.getStatus();
         this.sellerId = sellerId;
-        this.authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + user.getRole().getRoleName().name()));
+        this.authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()))
+                .collect(Collectors.toList());
     }
 
     public String getUserId() {
@@ -72,7 +73,7 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return AccountStatus.ACTIVE.equals(status);
+        return UserStatus.ACTIVE.equals(status);
     }
 
     @Override
@@ -82,6 +83,6 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return AccountStatus.ACTIVE.equals(status);
+        return UserStatus.ACTIVE.equals(status);
     }
 }

@@ -6,7 +6,7 @@ import com.abs.app.common.constant.UserConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.exception.UnauthorizedException;
 import com.abs.app.domain.entity.User;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.UserStatus;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.domain.service.RefreshTokenService;
 import com.abs.app.infrastructure.security.JwtTokenProvider;
@@ -45,7 +45,7 @@ public class RefreshTokenCommandHandler {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(UserConstant.USER_NOT_EXIST));
 
-        if (!AccountStatus.ACTIVE.equals(user.getStatus())) {
+        if (!UserStatus.ACTIVE.equals(user.getStatus())) {
             throw new UnauthorizedException(AuthConstant.PROHIBIT_ACCOUNT_MESSAGE);
         }
 
@@ -53,9 +53,14 @@ public class RefreshTokenCommandHandler {
             throw new UnauthorizedException(AuthConstant.INVALID_TOKEN);
         }
 
+        String roleStr = user.getRoles().stream()
+                .findFirst()
+                .map(role -> role.getRoleName().toString())
+                .orElse("CUSTOMER");
+
         String newAccessToken = jwtTokenProvider.generateAccessToken(
                 userId,
-                user.getRole().getRoleName().toString());
+                roleStr);
 
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId);
         refreshTokenService.save(userId, newRefreshToken, refreshTokenExpirationMinutes());

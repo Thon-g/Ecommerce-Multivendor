@@ -1,6 +1,6 @@
 package com.abs.app.application.seller.dto;
 
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,5 +18,5 @@ public class SellerResponseDto {
     private String businessEmail;
     private String businessPhone;
     private String gstin;
-    private AccountStatus sellerStatus;
+    private SellerStatus status;
 }

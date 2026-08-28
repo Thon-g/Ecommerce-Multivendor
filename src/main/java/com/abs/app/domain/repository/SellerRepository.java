@@ -1,7 +1,7 @@
 package com.abs.app.domain.repository;
 
 import com.abs.app.domain.entity.Seller;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +19,7 @@ public interface SellerRepository {
     boolean existsByUserId(String userId);
 
     /** Lấy danh sách seller theo trạng thái (dùng cho Admin) */
-    List<Seller> findBySellerStatus(AccountStatus status);
+    List<Seller> findByStatus(SellerStatus status);
 
     /** Lấy tất cả sellers (Admin dashboard) */
     List<Seller> findAll();

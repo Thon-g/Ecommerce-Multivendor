@@ -1,7 +1,7 @@
 package com.abs.app.infrastructure.persistence.jpa;
 
 import com.abs.app.domain.entity.Seller;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public interface SellerJpaRepository extends JpaRepository<Seller, String> {
 
     boolean existsByUserUserId(String userId);
 
-    List<Seller> findBySellerStatus(AccountStatus status);
+    List<Seller> findByStatus(SellerStatus status);
 }

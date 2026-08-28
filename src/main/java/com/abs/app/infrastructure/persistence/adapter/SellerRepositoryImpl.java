@@ -1,7 +1,7 @@
 package com.abs.app.infrastructure.persistence.adapter;
 
 import com.abs.app.domain.entity.Seller;
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.repository.SellerRepository;
 import com.abs.app.infrastructure.persistence.jpa.SellerJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +37,8 @@ public class SellerRepositoryImpl implements SellerRepository {
     }
 
     @Override
-    public List<Seller> findBySellerStatus(AccountStatus status) {
-        return sellerJpaRepository.findBySellerStatus(status);
+    public List<Seller> findByStatus(SellerStatus status) {
+        return sellerJpaRepository.findByStatus(status);
     }
 
     @Override
