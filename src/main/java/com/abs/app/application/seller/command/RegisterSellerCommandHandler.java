@@ -1,6 +1,6 @@
 package com.abs.app.application.seller.command;
 
-import com.abs.app.application.seller.mapper.SellerMapper;
+import com.abs.app.application.seller.dto.SellerResponseDto;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
@@ -9,6 +9,7 @@ import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.entity.User;
 import com.abs.app.domain.repository.SellerRepository;
 import com.abs.app.domain.repository.UserRepository;
+import com.abs.app.infrastructure.mapper.SellerMapper;
 import com.abs.app.infrastructure.security.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class RegisterSellerCommandHandler {
     private final SellerMapper sellerMapper;
 
     @Transactional
-    public String handle(RegisterSellerCommand command) {
+    public SellerResponseDto handle(RegisterSellerCommand command) {
         String userId = SecurityUtils.getCurrentUserId();
 
         User user = userRepository.findById(userId)
@@ -36,8 +37,8 @@ public class RegisterSellerCommandHandler {
         String sellerId = GenerateIdUtil.GenerateId("SHOP", 8);
         Seller seller = sellerMapper.toSeller(command, user, sellerId);
 
-        sellerRepository.save(seller);
+        Seller savedSeller = sellerRepository.save(seller);
 
-        return SellerConstant.SELLER_REGISTER_SUCCESS;
+        return sellerMapper.toSellerResponseDto(savedSeller);
     }
 }

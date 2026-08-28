@@ -2,7 +2,11 @@ package com.abs.app.presentation.controller.seller;
 
 import com.abs.app.application.seller.command.RegisterSellerCommand;
 import com.abs.app.application.seller.command.RegisterSellerCommandHandler;
+import com.abs.app.application.seller.dto.RegisterSellerRequestDto;
+import com.abs.app.application.seller.dto.SellerResponseDto;
+import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.response.ApiResponse;
+import com.abs.app.infrastructure.mapper.SellerMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,12 +27,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class SellerController {
 
     private final RegisterSellerCommandHandler registerSellerCommandHandler;
+    private final SellerMapper sellerMapper;
 
     @Operation(summary = "Đăng ký mở gian hàng", description = "Gửi thông tin gian hàng để chờ Admin phê duyệt. Mỗi tài khoản chỉ được mở 1 gian hàng.")
     @PostMapping("/register")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<ApiResponse<Void>> registerSeller(@Valid @RequestBody RegisterSellerCommand command) {
-        String message = registerSellerCommandHandler.handle(command);
-        return ResponseEntity.ok(new ApiResponse<>(true, message, null));
+    public ResponseEntity<ApiResponse<SellerResponseDto>> registerSeller(@Valid @RequestBody RegisterSellerRequestDto request) {
+        RegisterSellerCommand command = sellerMapper.toCommand(request);
+        SellerResponseDto responseDto = registerSellerCommandHandler.handle(command);
+        return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.SELLER_REGISTER_SUCCESS, responseDto));
     }
 }
