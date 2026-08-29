@@ -1,32 +1,40 @@
 package com.abs.app.domain.entity;
 
-import com.abs.app.domain.entity.enums.AccountStatus;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "sellers")
 public class Seller {
+
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "seller_id", nullable = false, unique = true)
     private String sellerId;
 
-    @Column(name = "seller_name", nullable = false, columnDefinition = "VARCHAR(100)")
-    private String sellerName;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    private User user;
 
-    @Column(name = "phone", columnDefinition = "VARCHAR(20)")
-    private String phone;
+    @Column(name = "shop_name", nullable = false, columnDefinition = "VARCHAR(100)")
+    private String shopName;
 
-    @Column(name = "email", unique = true, nullable = false, columnDefinition = "VARCHAR(100)")
-    private String email;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "pickup_address_id")
+    private Address pickupAddress;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private SellerStatus status = SellerStatus.PENDING_VERIFICATION;
 
     @Embedded
     private BusinessDetails businessDetails = new BusinessDetails();
@@ -34,21 +42,15 @@ public class Seller {
     @Embedded
     private BankDetails bankDetails = new BankDetails();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pickup_address_id")
-    private Address pickupAddress = new Address();
-
     @Column(name = "gstin", columnDefinition = "VARCHAR(20)")
-    private String GSTIN;
+    private String gstin;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Role role = new Role();
+    @OneToMany(mappedBy = "seller")
+    private Set<Product> products = new HashSet<>();
 
-    @Column(name = "is_email_verified", nullable = false)
-    private boolean isEmailVerified = false;
+    @OneToMany(mappedBy = "seller")
+    private Set<Transaction> transactions = new HashSet<>();
 
-    @Column(name = "user_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private AccountStatus userStatus = AccountStatus.PENDING_VERIFICATION;
+    @OneToOne(mappedBy = "seller", cascade = CascadeType.ALL)
+    private SellerReport sellerReport;
 }

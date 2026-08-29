@@ -7,9 +7,11 @@ import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.DuplicateResourceException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.util.GenerateIdUtil;
+import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.Role;
 import com.abs.app.domain.entity.User;
 import com.abs.app.domain.entity.enums.RoleUser;
+import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.RoleRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.domain.service.OtpTokenService;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 public class RegisterUserCommandHandler {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final CartRepository cartRepository ;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final OtpTokenService otpTokenService;
@@ -49,11 +52,19 @@ public class RegisterUserCommandHandler {
         newUser.setFirstName(command.getFirstName());
         newUser.setLastName(command.getLastName());
         newUser.setUpdateAt(LocalDateTime.now());
-        newUser.setRole(role);
+        newUser.getRoles().add(role);
         userRepository.save(newUser);
         otpTokenService.invalidateEmailVerified(command.getEmail());
 
-        String accessToken = jwtTokenProvider.generateAccessToken(newUser.getUserId(), newUser.getRole().getRoleName().toString());
+        Cart newCart = new Cart();
+        newCart.setUser(newUser);
+        cartRepository.save(newCart);
+
+        String roleStr = newUser.getRoles().stream()
+                .findFirst()
+                .map(r -> r.getRoleName().toString())
+                .orElse("CUSTOMER");
+        String accessToken = jwtTokenProvider.generateAccessToken(newUser.getUserId(), roleStr);
 
         return AuthResponseDto.builder()
                 .accessToken(accessToken)

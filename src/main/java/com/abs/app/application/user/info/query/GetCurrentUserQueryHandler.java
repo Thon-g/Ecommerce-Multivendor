@@ -20,6 +20,11 @@ public class GetCurrentUserQueryHandler {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(UserConstant.USER_NOT_EXIST));
 
+        String roleStr = user.getRoles().stream()
+                .findFirst()
+                .map(role -> role.getRoleName().toString())
+                .orElse("CUSTOMER");
+
         return UserInfoResponseDto.builder()
                 .userId(user.getUserId())
                 .userName(user.getUserName())
@@ -31,7 +36,7 @@ public class GetCurrentUserQueryHandler {
                 .isReceiveEmail(user.isReceiveEmail())
                 .gender(user.isGender())
                 .status(user.getStatus().name())
-                .role(user.getRole().getRoleName().toString())
+                .role(roleStr)
                 .addresses(user.getAddresses().stream().map(Address::getAddress).collect(Collectors.toSet()))
                 .build();
     }
