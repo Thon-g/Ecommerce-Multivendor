@@ -6,12 +6,18 @@ import com.abs.app.infrastructure.persistence.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
+
+    @Override
+    public List<User> findAll() {
+        return userJpaRepository.findAll();
+    }
 
     @Override
     public Optional<User> findByEmail(String email) {
