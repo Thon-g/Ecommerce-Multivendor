@@ -2,6 +2,7 @@ package com.abs.app.application.seller.command;
 
 import com.abs.app.application.seller.dto.SellerResponseDto;
 import com.abs.app.common.constant.SellerConstant;
+import com.abs.app.common.constant.UserConstant;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.util.GenerateIdUtil;
@@ -34,7 +35,7 @@ public class RegisterSellerCommandHandler {
         String userId = SecurityUtils.getCurrentUserId();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tài khoản người dùng."));
+                .orElseThrow(() -> new ResourceNotFoundException(UserConstant.USER_NOT_EXIST));
 
         Optional<Seller> existingSellerOpt = sellerRepository.findByUserId(userId);
 
