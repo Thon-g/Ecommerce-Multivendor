@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EcommerceMultilvendorApplication {
+public class EcommerceMultivendorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(EcommerceMultilvendorApplication.class, args);
+		SpringApplication.run(EcommerceMultivendorApplication.class, args);
 	}
 
 }
