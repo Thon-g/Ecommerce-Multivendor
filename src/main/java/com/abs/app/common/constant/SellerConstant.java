@@ -40,4 +40,8 @@ public class SellerConstant {
     public static final String PICKUP_PINCODE_REQUIRED = "Mã bưu chính không được để trống";
     public static final String PICKUP_PHONE_REQUIRED = "Số điện thoại lấy hàng không được để trống";
     public static final String PICKUP_PHONE_INVALID = "Số điện thoại lấy hàng không hợp lệ";
+
+    public static final String ADMIN_UPDATE_SELLER_STATUS_SUCCESS = "Cập nhật trạng thái gian hàng thành công.";
+    public static final String ADMIN_GET_SELLERS_SUCCESS = "Lấy danh sách gian hàng thành công.";
+    public static final String INVALID_STATUS_TRANSITION = "Không thể chuyển trạng thái gian hàng từ %s sang %s.";
 }
