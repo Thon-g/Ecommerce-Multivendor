@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 public class GetAllSellersQueryHandler {
 
     private final SellerRepository sellerRepository;
-    private final SellerMapper sellerMapper;
 
     public List<SellerResponseDto> handle(GetAllSellersQuery query) {
         List<Seller> sellers;
@@ -27,7 +26,7 @@ public class GetAllSellersQueryHandler {
         }
 
         return sellers.stream()
-                .map(sellerMapper::toSellerResponseDto)
+                .map(SellerMapper::toSellerResponseDto)
                 .collect(Collectors.toList());
     }
 }

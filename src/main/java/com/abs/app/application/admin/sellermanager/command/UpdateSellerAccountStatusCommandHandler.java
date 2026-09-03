@@ -12,11 +12,10 @@ import org.springframework.stereotype.Service;
 public class UpdateSellerAccountStatusCommandHandler {
 
     private final SellerService sellerService;
-    private final SellerMapper sellerMapper;
 
     public SellerResponseDto handle(UpdateSellerAccountStatusCommand command) {
         Seller seller = sellerService.updateSellerStatus(command.getSellerId(), command.getStatus());
         
-        return sellerMapper.toSellerResponseDto(seller);
+        return SellerMapper.toSellerResponseDto(seller);
     }
 }
