@@ -30,7 +30,6 @@ public class SellerController {
     private final UpdateSellerBankCommandHandler updateSellerBankCommandHandler;
     private final UpdateSellerAddressCommandHandler updateSellerAddressCommandHandler;
     private final GetCurrentSellerQueryHandler getCurrentSellerQueryHandler;
-    private final SellerMapper sellerMapper;
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('CUSTOMER')")

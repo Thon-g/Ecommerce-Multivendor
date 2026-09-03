@@ -28,7 +28,6 @@ public class RegisterSellerCommandHandler {
 
     private final SellerRepository sellerRepository;
     private final UserRepository userRepository;
-    private final SellerMapper sellerMapper;
 
     @Transactional
     public SellerResponseDto handle(RegisterSellerCommand command) {
@@ -55,7 +54,7 @@ public class RegisterSellerCommandHandler {
             existingSeller.setStatus(SellerStatus.PENDING_VERIFICATION);
 
             Seller savedSeller = sellerRepository.save(existingSeller);
-            return sellerMapper.toSellerResponseDto(savedSeller);
+            return SellerMapper.toSellerResponseDto(savedSeller);
         }
 
         String sellerId = GenerateIdUtil.GenerateId(SellerConstant.SALT_TAG, SellerConstant.STRING_LIMIT);
@@ -63,7 +62,7 @@ public class RegisterSellerCommandHandler {
 
         Seller savedSeller = sellerRepository.save(seller);
 
-        return sellerMapper.toSellerResponseDto(savedSeller);
+        return SellerMapper.toSellerResponseDto(savedSeller);
     }
 
     private Seller createNewSeller(RegisterSellerCommand command, User user, String sellerId) {
