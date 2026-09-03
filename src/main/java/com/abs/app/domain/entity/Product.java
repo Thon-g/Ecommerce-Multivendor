@@ -40,10 +40,8 @@ public class Product {
     @Column(name = "color", columnDefinition = "VARCHAR(50)")
     private String color;
 
-    @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url", columnDefinition = "VARCHAR(255)")
-    private List<String> images = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductImage> images = new ArrayList<>();
 
     @Column(name = "num_ratings")
     private Integer numRatings;
