@@ -1,6 +1,6 @@
 package com.abs.app.infrastructure.mapper;
 
-import com.abs.app.application.seller.dto.SellerResponseDto;
+import com.abs.app.application.seller.profile.dto.SellerResponseDto;
 import com.abs.app.domain.entity.Seller;
 
 

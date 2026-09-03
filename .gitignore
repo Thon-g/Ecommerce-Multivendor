@@ -1,6 +1,7 @@
 HELP.md
 business_explanation.md
 ARCHITECTURE_GUIDELINES.md
+SELLER_STATUS_WORKFLOW.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

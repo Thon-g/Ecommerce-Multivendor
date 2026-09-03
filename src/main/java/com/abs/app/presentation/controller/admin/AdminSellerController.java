@@ -4,7 +4,7 @@ import com.abs.app.application.admin.sellermanager.command.UpdateSellerAccountSt
 import com.abs.app.application.admin.sellermanager.command.UpdateSellerAccountStatusCommandHandler;
 import com.abs.app.application.admin.sellermanager.query.GetAllSellersQuery;
 import com.abs.app.application.admin.sellermanager.query.GetAllSellersQueryHandler;
-import com.abs.app.application.seller.dto.SellerResponseDto;
+import com.abs.app.application.seller.profile.dto.SellerResponseDto;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.domain.entity.enums.SellerStatus;

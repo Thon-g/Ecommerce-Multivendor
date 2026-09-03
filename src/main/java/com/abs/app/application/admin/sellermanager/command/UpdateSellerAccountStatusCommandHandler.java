@@ -1,6 +1,6 @@
 package com.abs.app.application.admin.sellermanager.command;
 
-import com.abs.app.application.seller.dto.SellerResponseDto;
+import com.abs.app.application.seller.profile.dto.SellerResponseDto;
 import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.service.SellerService;
 import com.abs.app.infrastructure.mapper.SellerMapper;

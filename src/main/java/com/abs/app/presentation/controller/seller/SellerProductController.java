@@ -1,0 +1,76 @@
+package com.abs.app.presentation.controller.seller;
+
+import com.abs.app.application.seller.product.command.*;
+import com.abs.app.application.seller.product.dto.CreateProductRequestDto;
+import com.abs.app.application.seller.product.dto.ProductResponseDto;
+import com.abs.app.application.seller.product.dto.UpdateProductRequestDto;
+import com.abs.app.common.constant.ProductConstant;
+import com.abs.app.common.response.ApiResponse;
+import com.abs.app.infrastructure.security.SecurityUtils;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/seller/products")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('SELLER')")
+public class SellerProductController {
+
+    private final CreateProductCommandHandler createProductCommandHandler;
+    private final UpdateProductCommandHandler updateProductCommandHandler;
+    private final DeleteProductCommandHandler deleteProductCommandHandler;
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@Valid @RequestBody CreateProductRequestDto request) {
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        CreateProductCommand command = new CreateProductCommand(
+                request.getTitle(),
+                request.getDescription(),
+                request.getMrpPrice(),
+                request.getSellingPrice(),
+                request.getQuantity(),
+                request.getColor(),
+                request.getSizes(),
+                request.getImages(),
+                request.getCategoryId(),
+                currentUserId
+        );
+        ProductResponseDto response = createProductCommandHandler.handle(command);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>(true, ProductConstant.PRODUCT_CREATED_SUCCESS, response));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
+            @PathVariable String id,
+            @Valid @RequestBody UpdateProductRequestDto request) {
+        
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        UpdateProductCommand command = new UpdateProductCommand(
+                id,
+                request.getTitle(),
+                request.getDescription(),
+                request.getMrpPrice(),
+                request.getSellingPrice(),
+                request.getQuantity(),
+                request.getColor(),
+                request.getSizes(),
+                request.getImages(),
+                request.getCategoryId(),
+                currentUserId
+        );
+        ProductResponseDto response = updateProductCommandHandler.handle(command);
+        return ResponseEntity.ok(new ApiResponse<>(true, ProductConstant.PRODUCT_UPDATED_SUCCESS, response));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable String id) {
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        deleteProductCommandHandler.handle(new DeleteProductCommand(id, currentUserId));
+        return ResponseEntity.ok(new ApiResponse<>(true, ProductConstant.PRODUCT_DELETED_SUCCESS, null));
+    }
+}

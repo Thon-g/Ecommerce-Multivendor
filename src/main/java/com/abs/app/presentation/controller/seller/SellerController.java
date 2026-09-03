@@ -1,9 +1,9 @@
 package com.abs.app.presentation.controller.seller;
 
-import com.abs.app.application.seller.command.*;
-import com.abs.app.application.seller.dto.*;
-import com.abs.app.application.seller.query.GetCurrentSellerQuery;
-import com.abs.app.application.seller.query.GetCurrentSellerQueryHandler;
+import com.abs.app.application.seller.profile.command.*;
+import com.abs.app.application.seller.profile.dto.*;
+import com.abs.app.application.seller.profile.query.GetCurrentSellerQuery;
+import com.abs.app.application.seller.profile.query.GetCurrentSellerQueryHandler;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.infrastructure.mapper.SellerMapper;
