@@ -44,7 +44,7 @@ public class UpdateProductCommandHandler {
             throw new BusinessException(ProductConstant.PRODUCT_FORBIDDEN);
         }
 
-        Category category = categoryRepository.findByCategoryId(command.getCategoryId())
+        Category category = categoryRepository.findById(command.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(CategoryConstant.CATEGORY_NOT_FOUND));
 
         product.setTitle(command.getTitle());

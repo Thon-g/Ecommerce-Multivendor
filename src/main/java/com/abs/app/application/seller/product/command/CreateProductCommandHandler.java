@@ -5,6 +5,7 @@ import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
+import com.abs.app.common.util.GenerateIdUtil;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.entity.ProductImage;
@@ -23,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -43,11 +43,11 @@ public class CreateProductCommandHandler {
             throw new BusinessException(SellerConstant.SELLER_NOT_ACTIVE);
         }
 
-        Category category = categoryRepository.findByCategoryId(command.getCategoryId())
+        Category category = categoryRepository.findById(command.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException(CategoryConstant.CATEGORY_NOT_FOUND));
 
         Product product = new Product();
-        product.setId(UUID.randomUUID().toString());
+        product.setId(GenerateIdUtil.GenerateId());
         product.setSeller(seller);
         product.setCategory(category);
         

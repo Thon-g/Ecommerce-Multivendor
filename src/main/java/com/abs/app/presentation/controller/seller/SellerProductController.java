@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/seller/products")
+@RequestMapping("/seller/products")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('SELLER')")
 public class SellerProductController {
