@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetCurrentSellerQueryHandler {
 
     private final SellerRepository sellerRepository;
-    private final SellerMapper sellerMapper;
 
     @Transactional(readOnly = true)
     public SellerResponseDto handle(GetCurrentSellerQuery query) {
@@ -28,6 +27,6 @@ public class GetCurrentSellerQueryHandler {
         Seller seller = sellerRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(SellerConstant.SELLER_NOT_FOUND));
 
-        return sellerMapper.toSellerResponseDto(seller);
+        return SellerMapper.toSellerResponseDto(seller);
     }
 }

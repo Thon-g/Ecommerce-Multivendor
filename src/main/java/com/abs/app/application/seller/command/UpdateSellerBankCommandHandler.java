@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateSellerBankCommandHandler {
 
     private final SellerRepository sellerRepository;
-    private final SellerMapper sellerMapper;
 
     @Transactional
     public SellerResponseDto handle(UpdateSellerBankCommand command) {
@@ -39,6 +38,6 @@ public class UpdateSellerBankCommandHandler {
         seller.setBankDetails(bankDetails);
 
         seller = sellerRepository.save(seller);
-        return sellerMapper.toSellerResponseDto(seller);
+        return SellerMapper.toSellerResponseDto(seller);
     }
 }
