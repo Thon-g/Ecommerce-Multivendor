@@ -2,12 +2,12 @@ package com.abs.app.infrastructure.mapper;
 
 import com.abs.app.application.seller.dto.SellerResponseDto;
 import com.abs.app.domain.entity.Seller;
-import org.springframework.stereotype.Component;
 
-@Component
+
 public class SellerMapper {
+    private SellerMapper() {}
 
-    public SellerResponseDto toSellerResponseDto(Seller seller) {
+    public static SellerResponseDto toSellerResponseDto(Seller seller) {
         if (seller == null) {
             return null;
         }
