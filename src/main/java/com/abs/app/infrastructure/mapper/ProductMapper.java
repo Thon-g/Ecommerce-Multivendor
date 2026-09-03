@@ -2,7 +2,7 @@ package com.abs.app.infrastructure.mapper;
 
 import com.abs.app.application.seller.product.dto.ProductResponseDto;
 import com.abs.app.domain.entity.Product;
-
+import com.abs.app.domain.entity.ProductImage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,15 @@ public class ProductMapper {
         dto.setQuantity(product.getQuantity());
         dto.setColor(product.getColor());
         dto.setSizes(product.getSizes());
-        dto.setImages(product.getImages());
+        
+        if (product.getImages() != null) {
+            List<String> imageUrls = product.getImages().stream()
+                    .sorted((img1, img2) -> Boolean.compare(img2.getIsMainImage(), img1.getIsMainImage()))
+                    .map(ProductImage::getImageUrl)
+                    .collect(Collectors.toList());
+            dto.setImages(imageUrls);
+        }
+
         dto.setNumRatings(product.getNumRatings());
         dto.setCreateAt(product.getCreateAt());
 

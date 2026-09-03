@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Getter
@@ -38,7 +39,7 @@ public class CreateProductRequestDto {
 
     private String sizes;
 
-    private List<String> images;
+    private List<MultipartFile> images;
 
     @NotBlank(message = ProductConstant.CATEGORY_REQUIRED)
     private String categoryId;

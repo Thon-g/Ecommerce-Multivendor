@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Getter
@@ -20,7 +21,7 @@ public class UpdateProductCommand {
     private Integer quantity;
     private String color;
     private String sizes;
-    private List<String> images;
+    private List<MultipartFile> images;
     private String categoryId;
     private String currentUserId;
 }

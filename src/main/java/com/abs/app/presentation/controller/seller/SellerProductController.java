@@ -24,8 +24,8 @@ public class SellerProductController {
     private final UpdateProductCommandHandler updateProductCommandHandler;
     private final DeleteProductCommandHandler deleteProductCommandHandler;
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@Valid @RequestBody CreateProductRequestDto request) {
+    @PostMapping(consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@Valid @ModelAttribute CreateProductRequestDto request) {
         String currentUserId = SecurityUtils.getCurrentUserId();
         CreateProductCommand command = new CreateProductCommand(
                 request.getTitle(),
@@ -44,10 +44,10 @@ public class SellerProductController {
                 .body(new ApiResponse<>(true, ProductConstant.PRODUCT_CREATED_SUCCESS, response));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(
             @PathVariable String id,
-            @Valid @RequestBody UpdateProductRequestDto request) {
+            @Valid @ModelAttribute UpdateProductRequestDto request) {
         
         String currentUserId = SecurityUtils.getCurrentUserId();
         UpdateProductCommand command = new UpdateProductCommand(
