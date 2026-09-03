@@ -14,9 +14,31 @@ public class FileStorageService {
     private static final String AVATAR_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/avatars/";
     private static final String AVATAR_PUBLIC_PATH = "/images/uploads/avatars/";
 
+    private static final String PRODUCT_IMAGE_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/products/";
+    private static final String PRODUCT_IMAGE_PUBLIC_PATH = "/images/uploads/products/";
+
+    private static final String REVIEW_IMAGE_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/reviews/";
+    private static final String REVIEW_IMAGE_PUBLIC_PATH = "/images/uploads/reviews/";
+
+    private static final String SELLER_IMAGE_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/sellers/";
+    private static final String SELLER_IMAGE_PUBLIC_PATH = "/images/uploads/sellers/";
+
     public String storeAvatar(MultipartFile file, String userId) {
         return storeImage(file, userId, AVATAR_UPLOAD_DIR, AVATAR_PUBLIC_PATH);
     }
+
+    public String storeProduct(MultipartFile file, String headString) {
+        return storeImage(file, headString, PRODUCT_IMAGE_UPLOAD_DIR, PRODUCT_IMAGE_PUBLIC_PATH);
+    }
+
+    public String storeReview(MultipartFile file, String headString) {
+        return storeImage(file, headString, REVIEW_IMAGE_UPLOAD_DIR, REVIEW_IMAGE_PUBLIC_PATH);
+    }
+
+    public String storeSeller(MultipartFile file, String headString) {
+        return storeImage(file, headString, SELLER_IMAGE_UPLOAD_DIR, SELLER_IMAGE_PUBLIC_PATH);
+    }
+
 
     private String storeImage(MultipartFile file, String headString, String path, String publicPath) {
         if (file == null || file.isEmpty()) {
