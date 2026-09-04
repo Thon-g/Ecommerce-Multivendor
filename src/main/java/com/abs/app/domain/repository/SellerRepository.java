@@ -2,8 +2,9 @@ package com.abs.app.domain.repository;
 
 import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.entity.enums.SellerStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface SellerRepository {
@@ -18,9 +19,9 @@ public interface SellerRepository {
     /** Kiểm tra User đã có gian hàng chưa (tránh đăng ký trùng) */
     boolean existsByUserId(String userId);
 
-    /** Lấy danh sách seller theo trạng thái (dùng cho Admin) */
-    List<Seller> findByStatus(SellerStatus status);
+    /** Ly danh sAch seller theo trng thAi (dA1ng cho Admin) */
+    Page<Seller> findByStatus(SellerStatus status, Pageable pageable);
 
-    /** Lấy tất cả sellers (Admin dashboard) */
-    List<Seller> findAll();
+    /** Tm kim seller */
+    Page<Seller> search(String keyword, SellerStatus status, Pageable pageable);
 }

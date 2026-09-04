@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.abs.app.common.response.PageResponse;
+
 import java.util.List;
 
 @RestController
@@ -22,8 +24,11 @@ public class CategoryController {
     private final GetCategoryByIdQueryHandler getCategoryByIdQueryHandler;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CategoryResponseDto>>> getAllCategories() {
-        List<CategoryResponseDto> response = getAllCategoriesQueryHandler.handle(new GetAllCategoriesQuery());
+    public ResponseEntity<ApiResponse<PageResponse<CategoryResponseDto>>> getAllCategories(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageResponse<CategoryResponseDto> response = getAllCategoriesQueryHandler.handle(new GetAllCategoriesQuery(keyword, page, size));
         return ResponseEntity.ok(new ApiResponse<>(true, CategoryConstant.CATEGORIES_FETCHED_SUCCESS, response));
     }
 
