@@ -7,6 +7,7 @@ import com.abs.app.application.seller.product.query.GetProductByIdQuery;
 import com.abs.app.application.seller.product.query.GetProductByIdQueryHandler;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.response.ApiResponse;
+import com.abs.app.common.response.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,13 @@ public class ProductController {
     private final GetProductByIdQueryHandler getProductByIdQueryHandler;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponseDto>>> getAllProducts(
-            @RequestParam(required = false) String categoryId) {
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponseDto>>> getAllProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
         
-        List<ProductResponseDto> response = getAllProductsQueryHandler.handle(new GetAllProductsQuery(categoryId));
+        PageResponse<ProductResponseDto> response = getAllProductsQueryHandler.handle(new GetAllProductsQuery(keyword, categoryId, page, size));
         return ResponseEntity.ok(new ApiResponse<>(true, ProductConstant.PRODUCTS_FETCHED_SUCCESS, response));
     }
 

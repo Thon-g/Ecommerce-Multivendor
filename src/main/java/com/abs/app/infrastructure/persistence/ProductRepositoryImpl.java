@@ -4,6 +4,9 @@ import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.infrastructure.persistence.jpa.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,13 +29,18 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
-    public List<Product> findAll() {
-        return productJpaRepository.findAll();
+    public Page<Product> search(String keyword, String categoryId, String sellerId, Pageable pageable) {
+        return productJpaRepository.search(keyword, categoryId, sellerId, pageable);
     }
 
     @Override
-    public List<Product> findBySellerId(String sellerId) {
-        return productJpaRepository.findBySeller_SellerId(sellerId);
+    public Page<Product> findByCategoryId(String categoryId, Pageable pageable) {
+        return productJpaRepository.findByCategory_CategoryId(categoryId, pageable);
+    }
+
+    @Override
+    public Page<Product> findBySellerId(String sellerId, Pageable pageable) {
+        return productJpaRepository.findBySeller_SellerId(sellerId, pageable);
     }
 
     @Override

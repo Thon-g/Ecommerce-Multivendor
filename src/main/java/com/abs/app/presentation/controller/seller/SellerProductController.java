@@ -4,8 +4,11 @@ import com.abs.app.application.seller.product.command.*;
 import com.abs.app.application.seller.product.dto.CreateProductRequestDto;
 import com.abs.app.application.seller.product.dto.ProductResponseDto;
 import com.abs.app.application.seller.product.dto.UpdateProductRequestDto;
+import com.abs.app.application.seller.product.query.GetSellerProductsQuery;
+import com.abs.app.application.seller.product.query.GetSellerProductsQueryHandler;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.response.ApiResponse;
+import com.abs.app.common.response.PageResponse;
 import com.abs.app.infrastructure.security.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ public class SellerProductController {
     private final CreateProductCommandHandler createProductCommandHandler;
     private final UpdateProductCommandHandler updateProductCommandHandler;
     private final DeleteProductCommandHandler deleteProductCommandHandler;
+    private final GetSellerProductsQueryHandler getSellerProductsQueryHandler;
 
     @PostMapping(consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@Valid @ModelAttribute CreateProductRequestDto request) {
@@ -65,6 +69,19 @@ public class SellerProductController {
         );
         ProductResponseDto response = updateProductCommandHandler.handle(command);
         return ResponseEntity.ok(new ApiResponse<>(true, ProductConstant.PRODUCT_UPDATED_SUCCESS, response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponseDto>>> getAllProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        String currentUserId = SecurityUtils.getCurrentUserId();
+        
+        PageResponse<ProductResponseDto> response = getSellerProductsQueryHandler.handle(new GetSellerProductsQuery(keyword, categoryId, currentUserId, page, size));
+        return ResponseEntity.ok(new ApiResponse<>(true, ProductConstant.PRODUCTS_FETCHED_SUCCESS, response));
     }
 
     @DeleteMapping("/{id}")

@@ -9,9 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetAllProductsQuery {
+public class GetSellerProductsQuery {
     private String keyword;
     private String categoryId;
+    private String userId;
     private int page = 1;
     private int size = 10;
 }
