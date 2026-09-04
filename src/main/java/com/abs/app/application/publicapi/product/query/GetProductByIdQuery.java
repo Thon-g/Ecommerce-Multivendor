@@ -1,4 +1,4 @@
-package com.abs.app.application.admin.category.query;
+package com.abs.app.application.publicapi.product.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCategoryByIdQuery {
+public class GetProductByIdQuery {
     private String id;
 }

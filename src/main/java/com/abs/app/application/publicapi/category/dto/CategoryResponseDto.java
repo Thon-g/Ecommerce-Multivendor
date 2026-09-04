@@ -1,4 +1,4 @@
-package com.abs.app.application.admin.category.dto;
+package com.abs.app.application.publicapi.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

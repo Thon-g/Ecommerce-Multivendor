@@ -1,10 +1,10 @@
-package com.abs.app.presentation.controller.category;
+package com.abs.app.presentation.controller.publicapi;
 
-import com.abs.app.application.admin.category.dto.CategoryResponseDto;
-import com.abs.app.application.admin.category.query.GetAllCategoriesQuery;
-import com.abs.app.application.admin.category.query.GetAllCategoriesQueryHandler;
-import com.abs.app.application.admin.category.query.GetCategoryByIdQuery;
-import com.abs.app.application.admin.category.query.GetCategoryByIdQueryHandler;
+import com.abs.app.application.publicapi.category.dto.CategoryResponseDto;
+import com.abs.app.application.publicapi.category.query.GetAllCategoriesQuery;
+import com.abs.app.application.publicapi.category.query.GetAllCategoriesQueryHandler;
+import com.abs.app.application.publicapi.category.query.GetCategoryByIdQuery;
+import com.abs.app.application.publicapi.category.query.GetCategoryByIdQueryHandler;
 import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;

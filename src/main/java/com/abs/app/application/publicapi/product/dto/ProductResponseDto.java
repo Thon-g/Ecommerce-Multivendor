@@ -1,6 +1,6 @@
-package com.abs.app.application.seller.product.dto;
+package com.abs.app.application.publicapi.product.dto;
 
-import com.abs.app.application.admin.category.dto.CategoryResponseDto;
+import com.abs.app.application.publicapi.category.dto.CategoryResponseDto;
 import com.abs.app.application.seller.profile.dto.SellerResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

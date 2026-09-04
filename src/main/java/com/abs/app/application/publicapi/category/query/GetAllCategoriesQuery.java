@@ -1,4 +1,4 @@
-package com.abs.app.application.admin.category.query;
+package com.abs.app.application.publicapi.category.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

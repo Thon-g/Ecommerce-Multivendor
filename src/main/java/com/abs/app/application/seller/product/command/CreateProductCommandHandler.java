@@ -1,6 +1,6 @@
 package com.abs.app.application.seller.product.command;
 
-import com.abs.app.application.seller.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
 import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.exception.BusinessException;
