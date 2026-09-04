@@ -4,9 +4,10 @@ import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
 import com.abs.app.infrastructure.persistence.jpa.CategoryJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -31,13 +32,13 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public List<Category> findAll() {
-        return categoryJpaRepository.findAll();
+    public Page<Category> search(String keyword, Pageable pageable) {
+        return categoryJpaRepository.search(keyword, pageable);
     }
 
     @Override
-    public List<Category> findByParentCategoryId(String parentId) {
-        return categoryJpaRepository.findByParentCategoryId(parentId);
+    public Page<Category> findByParentCategoryId(String parentId, Pageable pageable) {
+        return categoryJpaRepository.findByParentCategoryId(parentId, pageable);
     }
 
     @Override
