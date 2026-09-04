@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.abs.app.common.response.PageResponse;
+
 import java.util.List;
 
 @RestController
@@ -25,10 +27,13 @@ public class AdminSellerController {
     private final UpdateSellerAccountStatusCommandHandler updateSellerAccountStatusCommandHandler;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<SellerResponseDto>>> getAllSellers(
-            @RequestParam(required = false) SellerStatus status) {
+    public ResponseEntity<ApiResponse<PageResponse<SellerResponseDto>>> getAllSellers(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) SellerStatus status,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
         
-        List<SellerResponseDto> response = getAllSellersQueryHandler.handle(new GetAllSellersQuery(status));
+        PageResponse<SellerResponseDto> response = getAllSellersQueryHandler.handle(new GetAllSellersQuery(keyword, status, page, size));
         return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.ADMIN_GET_SELLERS_SUCCESS, response));
     }
 

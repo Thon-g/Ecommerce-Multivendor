@@ -5,9 +5,10 @@ import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.repository.SellerRepository;
 import com.abs.app.infrastructure.persistence.jpa.SellerJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -37,12 +38,12 @@ public class SellerRepositoryImpl implements SellerRepository {
     }
 
     @Override
-    public List<Seller> findByStatus(SellerStatus status) {
-        return sellerJpaRepository.findByStatus(status);
+    public Page<Seller> findByStatus(SellerStatus status, Pageable pageable) {
+        return sellerJpaRepository.findByStatus(status, pageable);
     }
 
     @Override
-    public List<Seller> findAll() {
-        return sellerJpaRepository.findAll();
+    public Page<Seller> search(String keyword, SellerStatus status, Pageable pageable) {
+        return sellerJpaRepository.search(keyword, status, pageable);
     }
 }

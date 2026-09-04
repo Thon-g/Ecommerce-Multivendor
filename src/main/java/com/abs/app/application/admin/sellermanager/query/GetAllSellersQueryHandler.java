@@ -5,10 +5,12 @@ import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.repository.SellerRepository;
 import com.abs.app.infrastructure.mapper.SellerMapper;
 import lombok.RequiredArgsConstructor;
+import com.abs.app.common.response.PageResponse;
+import com.abs.app.common.util.PaginationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,17 +18,16 @@ public class GetAllSellersQueryHandler {
 
     private final SellerRepository sellerRepository;
 
-    public List<SellerResponseDto> handle(GetAllSellersQuery query) {
-        List<Seller> sellers;
+    public PageResponse<SellerResponseDto> handle(GetAllSellersQuery query) {
+        Pageable pageable = PaginationUtil.createPageable(query.getPage(), query.getSize(), Sort.by("sellerId").descending());
         
-        if (query.getStatus() != null) {
-            sellers = sellerRepository.findByStatus(query.getStatus());
-        } else {
-            sellers = sellerRepository.findAll();
-        }
+        Page<Seller> page = sellerRepository.search(query.getKeyword(), query.getStatus(), pageable);
 
-        return sellers.stream()
-                .map(SellerMapper::toSellerResponseDto)
-                .collect(Collectors.toList());
+        return PaginationUtil.toPageResponse(
+                page,
+                SellerMapper::toSellerResponseDto,
+                query.getPage(),
+                query.getSize()
+        );
     }
 }
