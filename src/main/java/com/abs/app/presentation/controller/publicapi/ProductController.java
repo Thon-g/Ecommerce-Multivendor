@@ -1,10 +1,10 @@
-package com.abs.app.presentation.controller.product;
+package com.abs.app.presentation.controller.publicapi;
 
-import com.abs.app.application.seller.product.dto.ProductResponseDto;
-import com.abs.app.application.seller.product.query.GetAllProductsQuery;
-import com.abs.app.application.seller.product.query.GetAllProductsQueryHandler;
-import com.abs.app.application.seller.product.query.GetProductByIdQuery;
-import com.abs.app.application.seller.product.query.GetProductByIdQueryHandler;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.query.GetAllProductsQuery;
+import com.abs.app.application.publicapi.product.query.GetAllProductsQueryHandler;
+import com.abs.app.application.publicapi.product.query.GetProductByIdQuery;
+import com.abs.app.application.publicapi.product.query.GetProductByIdQueryHandler;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.common.response.PageResponse;

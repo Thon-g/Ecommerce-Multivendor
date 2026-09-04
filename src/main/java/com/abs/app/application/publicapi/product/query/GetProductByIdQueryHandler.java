@@ -1,6 +1,6 @@
-package com.abs.app.application.seller.product.query;
+package com.abs.app.application.publicapi.product.query;
 
-import com.abs.app.application.seller.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Product;

@@ -1,6 +1,6 @@
-package com.abs.app.application.seller.product.query;
+package com.abs.app.application.publicapi.product.query;
 
-import com.abs.app.application.seller.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
 import com.abs.app.common.response.PageResponse;
 import com.abs.app.common.util.PaginationUtil;
 import com.abs.app.domain.entity.Product;

@@ -1,7 +1,7 @@
 package com.abs.app.presentation.controller.admin;
 
 import com.abs.app.application.admin.category.command.*;
-import com.abs.app.application.admin.category.dto.CategoryResponseDto;
+import com.abs.app.application.publicapi.category.dto.CategoryResponseDto;
 import com.abs.app.application.admin.category.dto.CreateCategoryRequestDto;
 import com.abs.app.application.admin.category.dto.UpdateCategoryRequestDto;
 import com.abs.app.common.constant.CategoryConstant;

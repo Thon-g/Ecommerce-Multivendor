@@ -1,6 +1,6 @@
-package com.abs.app.application.admin.category.query;
+package com.abs.app.application.publicapi.category.query;
 
-import com.abs.app.application.admin.category.dto.CategoryResponseDto;
+import com.abs.app.application.publicapi.category.dto.CategoryResponseDto;
 import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;

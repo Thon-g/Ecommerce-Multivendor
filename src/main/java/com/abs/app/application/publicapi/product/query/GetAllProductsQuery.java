@@ -1,4 +1,4 @@
-package com.abs.app.application.seller.product.query;
+package com.abs.app.application.publicapi.product.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

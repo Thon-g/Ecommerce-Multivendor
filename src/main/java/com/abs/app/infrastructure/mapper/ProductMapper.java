@@ -1,6 +1,6 @@
 package com.abs.app.infrastructure.mapper;
 
-import com.abs.app.application.seller.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.entity.ProductImage;
 
