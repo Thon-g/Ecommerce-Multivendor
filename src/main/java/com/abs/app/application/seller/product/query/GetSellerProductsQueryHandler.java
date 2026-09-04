@@ -26,7 +26,7 @@ public class GetSellerProductsQueryHandler {
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponseDto> handle(GetSellerProductsQuery query) {
-        Seller seller = sellerRepository.findByUserUserId(query.getUserId())
+        Seller seller = sellerRepository.findByUserId(query.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(SellerConstant.SELLER_NOT_FOUND));
 
         Pageable pageable = PaginationUtil.createPageable(query.getPage(), query.getSize(), Sort.by("createAt").descending());
