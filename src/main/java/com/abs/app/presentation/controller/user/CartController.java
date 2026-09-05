@@ -2,11 +2,16 @@ package com.abs.app.presentation.controller.user;
 
 import com.abs.app.application.user.cart.command.AddToCartCommand;
 import com.abs.app.application.user.cart.command.AddToCartCommandHandler;
+import com.abs.app.application.user.cart.command.ApplyCouponToCartCommand;
+import com.abs.app.application.user.cart.command.ApplyCouponToCartCommandHandler;
 import com.abs.app.application.user.cart.command.RemoveCartItemCommand;
 import com.abs.app.application.user.cart.command.RemoveCartItemCommandHandler;
+import com.abs.app.application.user.cart.command.RemoveCouponFromCartCommand;
+import com.abs.app.application.user.cart.command.RemoveCouponFromCartCommandHandler;
 import com.abs.app.application.user.cart.command.UpdateCartItemQuantityCommand;
 import com.abs.app.application.user.cart.command.UpdateCartItemQuantityCommandHandler;
 import com.abs.app.application.user.cart.dto.AddToCartRequestDto;
+import com.abs.app.application.user.cart.dto.ApplyCouponRequestDto;
 import com.abs.app.application.user.cart.dto.CartItemResponseDto;
 import com.abs.app.application.user.cart.dto.CartResponseDto;
 import com.abs.app.application.user.cart.dto.UpdateCartItemRequestDto;
@@ -30,6 +35,8 @@ public class CartController {
     private final AddToCartCommandHandler addToCartCommandHandler;
     private final UpdateCartItemQuantityCommandHandler updateCartItemQuantityCommandHandler;
     private final RemoveCartItemCommandHandler removeCartItemCommandHandler;
+    private final ApplyCouponToCartCommandHandler applyCouponToCartCommandHandler;
+    private final RemoveCouponFromCartCommandHandler removeCouponFromCartCommandHandler;
 
     @GetMapping
     public ResponseEntity<ApiResponse<CartResponseDto>> getCart() {
@@ -64,4 +71,23 @@ public class CartController {
         removeCartItemCommandHandler.handle(new RemoveCartItemCommand(userId, cartItemId));
         return ResponseEntity.ok(new ApiResponse<>(true, "Item removed from cart successfully", null));
     }
+
+    @PostMapping("/coupon")
+    public ResponseEntity<ApiResponse<CartResponseDto>> applyCoupon(@Valid @RequestBody ApplyCouponRequestDto request) {
+        String userId = SecurityUtils.getCurrentUserId();
+        CartResponseDto response = applyCouponToCartCommandHandler.handle(
+                new ApplyCouponToCartCommand(userId, request.getCouponCode())
+        );
+        return ResponseEntity.ok(new ApiResponse<>(true, "Coupon applied successfully", response));
+    }
+
+    @DeleteMapping("/coupon")
+    public ResponseEntity<ApiResponse<CartResponseDto>> removeCoupon() {
+        String userId = SecurityUtils.getCurrentUserId();
+        CartResponseDto response = removeCouponFromCartCommandHandler.handle(
+                new RemoveCouponFromCartCommand(userId)
+        );
+        return ResponseEntity.ok(new ApiResponse<>(true, "Coupon removed successfully", response));
+    }
 }
+

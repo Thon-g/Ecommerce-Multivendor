@@ -1,6 +1,7 @@
 package com.abs.app.application.user.cart.command;
 
 import com.abs.app.application.user.cart.dto.CartItemResponseDto;
+import com.abs.app.common.constant.CartConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.CartItem;
@@ -27,10 +28,10 @@ public class UpdateCartItemQuantityCommandHandler {
     @Transactional
     public CartItemResponseDto handle(UpdateCartItemQuantityCommand command) {
         CartItem cartItem = cartItemRepository.findById(command.getCartItemId())
-                .orElseThrow(() -> new ResourceNotFoundException("CartItem not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(CartConstant.CART_ITEM_NOT_FOUND));
 
         if (!cartItem.getUserId().equals(command.getUserId())) {
-            throw new ResourceNotFoundException("CartItem not found for this user");
+            throw new ResourceNotFoundException(CartConstant.CART_ITEM_NOT_BELONG_TO_USER);
         }
 
         cartItem.setQuantity(command.getQuantity());
