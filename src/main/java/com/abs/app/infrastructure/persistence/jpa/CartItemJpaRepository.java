@@ -1,4 +1,4 @@
-﻿package com.abs.app.infrastructure.persistence.jpa;
+package com.abs.app.infrastructure.persistence.jpa;
 
 import com.abs.app.domain.entity.CartItem;
 import org.springframework.data.jpa.repository.JpaRepository;

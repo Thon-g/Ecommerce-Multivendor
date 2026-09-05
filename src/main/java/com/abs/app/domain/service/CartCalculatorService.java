@@ -32,7 +32,7 @@ public class CartCalculatorService {
 
             if (coupon.getDiscountType() == DiscountType.PERCENTAGE) {
                 couponDiscount = (int) (totalSellingPrice * (coupon.getDiscountPercentage() / 100.0));
-            } else if (coupon.getDiscountType() == DiscountType.FIXED) {
+            } else if (coupon.getDiscountType() == DiscountType.FIXED_AMOUNT) {
                 couponDiscount = coupon.getDiscountPercentage().intValue();
             }
 
