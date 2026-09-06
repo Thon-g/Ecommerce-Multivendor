@@ -10,4 +10,6 @@ public class CartConstant {
     public static final String COUPON_EXPIRED = "Mã giảm giá đã hết hiệu lực.";
     public static final String COUPON_NOT_IN_VALID_PERIOD = "Mã giảm giá không nằm trong thời gian sử dụng.";
     public static final String COUPON_ALREADY_USED = "Bạn đã sử dụng mã giảm giá này rồi.";
+
+    public static final String CANNOT_ADD_OWN_PRODUCT = "Bạn không thể thêm sản phẩm của chính mình vào giỏ hàng.";
 }

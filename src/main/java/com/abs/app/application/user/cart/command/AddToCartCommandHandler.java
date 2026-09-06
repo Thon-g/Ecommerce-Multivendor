@@ -1,6 +1,7 @@
 package com.abs.app.application.user.cart.command;
 
 import com.abs.app.application.user.cart.dto.CartItemResponseDto;
+import com.abs.app.common.constant.CartConstant;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.constant.UserConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
@@ -34,6 +35,10 @@ public class AddToCartCommandHandler {
     public CartItemResponseDto handle(AddToCartCommand command) {
         Product product = productRepository.findById(command.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
+
+        if (product.getSeller().getUser().getUserId().equals(command.getUserId())) {
+            throw new IllegalStateException(CartConstant.CANNOT_ADD_OWN_PRODUCT);
+        }
 
         Cart cart = cartRepository.findByUserId(command.getUserId()).orElseGet(() -> {
             User user = userRepository.findById(command.getUserId())
