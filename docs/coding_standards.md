@@ -35,5 +35,5 @@ Tài liệu này định nghĩa các quy tắc lập trình bắt buộc phải 
 
 ## 7. Domain Services cho Logic Lặp Lại (DRY)
 - Các đoạn logic nghiệp vụ lặp đi lặp lại nhiều lần giữa các Handler (ví dụ: kiểm tra tồn tại và khởi tạo tự động Wishlist/Cart cho User) **BẮT BUỘC** phải được tách ra thành một Service riêng.
-- Vị trí đặt: `src/main/java/com/abs/app/domain/service/` (VD: `WishlistService.java`).
+- Vị trí đặt: `src/main/java/com/abs/app/domain/service/` (VD: `CartService.java`).
 - Không được phép copy-paste cùng một đoạn logic giống hệt nhau vào nhiều file Handler/Query khác nhau.
