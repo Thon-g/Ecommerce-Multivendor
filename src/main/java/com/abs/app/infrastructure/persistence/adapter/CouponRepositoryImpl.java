@@ -1,4 +1,4 @@
-package com.abs.app.infrastructure.persistence;
+package com.abs.app.infrastructure.persistence.adapter;
 
 import com.abs.app.domain.entity.Coupon;
 import com.abs.app.domain.repository.CouponRepository;
