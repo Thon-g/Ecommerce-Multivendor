@@ -8,11 +8,12 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "categories")
 public class Category {
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "categories_id", nullable = false, unique = true)
     private String id;
 

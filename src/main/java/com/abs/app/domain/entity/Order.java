@@ -13,11 +13,12 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "orders")
 public class Order {
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "order_id", nullable = false, unique = true)
     private String orderId;
 
