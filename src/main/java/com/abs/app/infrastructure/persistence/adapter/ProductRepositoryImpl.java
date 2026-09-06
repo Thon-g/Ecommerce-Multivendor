@@ -1,4 +1,4 @@
-package com.abs.app.infrastructure.persistence;
+package com.abs.app.infrastructure.persistence.adapter;
 
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.repository.ProductRepository;
