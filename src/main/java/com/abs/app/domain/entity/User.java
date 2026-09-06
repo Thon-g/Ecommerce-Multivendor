@@ -14,11 +14,12 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users")
 public class User {
     @Id
+    @EqualsAndHashCode.Include
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
