@@ -17,6 +17,7 @@ import com.abs.app.application.user.cart.dto.CartResponseDto;
 import com.abs.app.application.user.cart.dto.UpdateCartItemRequestDto;
 import com.abs.app.application.user.cart.query.GetCartQuery;
 import com.abs.app.application.user.cart.query.GetCartQueryHandler;
+import com.abs.app.common.constant.CartConstant;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.infrastructure.security.SecurityUtils;
 import jakarta.validation.Valid;
@@ -42,7 +43,7 @@ public class CartController {
     public ResponseEntity<ApiResponse<CartResponseDto>> getCart() {
         String userId = SecurityUtils.getCurrentUserId();
         CartResponseDto response = getCartQueryHandler.handle(new GetCartQuery(userId));
-        return ResponseEntity.ok(new ApiResponse<>(true, "Cart fetched successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.FETCH_CART_SUCCESS, response));
     }
 
     @PostMapping("/items")
@@ -51,7 +52,7 @@ public class CartController {
         CartItemResponseDto response = addToCartCommandHandler.handle(
                 new AddToCartCommand(userId, request.getProductId(), request.getSize(), request.getQuantity())
         );
-        return ResponseEntity.ok(new ApiResponse<>(true, "Item added to cart successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.ADD_ITEM_SUCCESS, response));
     }
 
     @PutMapping("/items/{cartItemId}")
@@ -62,14 +63,14 @@ public class CartController {
         CartItemResponseDto response = updateCartItemQuantityCommandHandler.handle(
                 new UpdateCartItemQuantityCommand(userId, cartItemId, request.getQuantity())
         );
-        return ResponseEntity.ok(new ApiResponse<>(true, "Cart item updated successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.UPDATE_ITEM_SUCCESS, response));
     }
 
     @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<ApiResponse<Void>> removeCartItem(@PathVariable Long cartItemId) {
         String userId = SecurityUtils.getCurrentUserId();
         removeCartItemCommandHandler.handle(new RemoveCartItemCommand(userId, cartItemId));
-        return ResponseEntity.ok(new ApiResponse<>(true, "Item removed from cart successfully", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.REMOVE_ITEM_SUCCESS, null));
     }
 
     @PostMapping("/coupon")
@@ -78,7 +79,7 @@ public class CartController {
         CartResponseDto response = applyCouponToCartCommandHandler.handle(
                 new ApplyCouponToCartCommand(userId, request.getCouponCode())
         );
-        return ResponseEntity.ok(new ApiResponse<>(true, "Coupon applied successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.APPLY_COUPON_SUCCESS, response));
     }
 
     @DeleteMapping("/coupon")
@@ -87,7 +88,7 @@ public class CartController {
         CartResponseDto response = removeCouponFromCartCommandHandler.handle(
                 new RemoveCouponFromCartCommand(userId)
         );
-        return ResponseEntity.ok(new ApiResponse<>(true, "Coupon removed successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.REMOVE_COUPON_SUCCESS, response));
     }
 }
 
