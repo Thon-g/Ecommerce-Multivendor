@@ -10,10 +10,12 @@ import com.abs.app.common.util.GenerateIdUtil;
 import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.Role;
 import com.abs.app.domain.entity.User;
+import com.abs.app.domain.entity.Wishlist;
 import com.abs.app.domain.entity.enums.RoleUser;
 import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.RoleRepository;
 import com.abs.app.domain.repository.UserRepository;
+import com.abs.app.domain.repository.WishlistRepository;
 import com.abs.app.domain.service.OtpTokenService;
 import com.abs.app.infrastructure.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,8 @@ import java.time.LocalDateTime;
 public class RegisterUserCommandHandler {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final CartRepository cartRepository ;
+    private final CartRepository cartRepository;
+    private final WishlistRepository wishlistRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final OtpTokenService otpTokenService;
@@ -59,6 +62,10 @@ public class RegisterUserCommandHandler {
         Cart newCart = new Cart();
         newCart.setUser(newUser);
         cartRepository.save(newCart);
+
+        Wishlist newWishlist = new Wishlist();
+        newWishlist.setUser(newUser);
+        wishlistRepository.save(newWishlist);
 
         String roleStr = newUser.getRoles().stream()
                 .findFirst()
