@@ -36,9 +36,7 @@ public class SellerProductController {
                 request.getDescription(),
                 request.getMrpPrice(),
                 request.getSellingPrice(),
-                request.getQuantity(),
-                request.getColor(),
-                request.getSizes(),
+                request.getSkus(),
                 request.getImages(),
                 request.getCategoryId(),
                 currentUserId
@@ -60,9 +58,7 @@ public class SellerProductController {
                 request.getDescription(),
                 request.getMrpPrice(),
                 request.getSellingPrice(),
-                request.getQuantity(),
-                request.getColor(),
-                request.getSizes(),
+                request.getSkus(),
                 request.getImages(),
                 request.getCategoryId(),
                 currentUserId

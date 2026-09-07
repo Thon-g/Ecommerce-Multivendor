@@ -1,6 +1,7 @@
 package com.abs.app.infrastructure.mapper;
 
 import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
+import com.abs.app.application.publicapi.product.dto.SkuResponseDto;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.entity.ProductImage;
 
@@ -22,9 +23,18 @@ public class ProductMapper {
         dto.setMrpPrice(product.getMrpPrice());
         dto.setSellingPrice(product.getSellingPrice());
         dto.setDiscountPercent(product.getDiscountPercent());
-        dto.setQuantity(product.getQuantity());
-        dto.setColor(product.getColor());
-        dto.setSizes(product.getSizes());
+        if (product.getSkus() != null) {
+            List<SkuResponseDto> skuDtos = product.getSkus().stream()
+                    .map(sku -> new SkuResponseDto(
+                            sku.getId(),
+                            sku.getSkuCode(),
+                            sku.getColor(),
+                            sku.getSize(),
+                            sku.getQuantity(),
+                            sku.getSellingPrice()
+                    )).collect(Collectors.toList());
+            dto.setSkus(skuDtos);
+        }
         
         if (product.getImages() != null) {
             List<String> imageUrls = product.getImages().stream()

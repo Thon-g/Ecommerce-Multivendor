@@ -13,6 +13,7 @@ public class ProductConstant {
 
     // Error messages
     public static final String PRODUCT_NOT_FOUND = "Không tìm thấy sản phẩm.";
+    public static final String SKU_NOT_FOUND = "Không tìm thấy SKU của sản phẩm.";
     public static final String PRODUCT_FORBIDDEN = "Bạn không có quyền chỉnh sửa/xóa sản phẩm của người khác.";
 
     // Validation messages

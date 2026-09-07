@@ -21,9 +21,7 @@ public class ProductResponseDto {
     private Integer mrpPrice;
     private Integer sellingPrice;
     private Integer discountPercent;
-    private Integer quantity;
-    private String color;
-    private String sizes;
+    private List<SkuResponseDto> skus;
     private List<String> images;
     private Integer numRatings;
     private LocalDateTime createAt;

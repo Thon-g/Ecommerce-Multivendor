@@ -56,7 +56,7 @@ class CreateProductCommandHandlerTest {
     @BeforeEach
     void setUp() {
         command = new CreateProductCommand(
-                "T-Shirt", "Cool T-Shirt", 200000, 150000, 100, "Red", "M,L", null, "CATEGORY_ID", "user123"
+                "T-Shirt", "Cool T-Shirt", 200000, 150000, List.of(new com.abs.app.application.seller.product.dto.SkuRequestDto("SKU1", "Red", "M,L", 100, 150000)), null, "CATEGORY_ID", "user123"
         );
 
         mockSeller = new Seller();

@@ -61,7 +61,7 @@ class UpdateProductCommandHandlerTest {
     @BeforeEach
     void setUp() {
         command = new UpdateProductCommand(
-                "PRODUCT_ID", "Updated T-Shirt", "Updated description", 300000, 250000, 50, "Blue", "L", null, "CATEGORY_ID", "user123"
+                "PRODUCT_ID", "Updated T-Shirt", "Updated description", 300000, 250000, List.of(new com.abs.app.application.seller.product.dto.SkuRequestDto("SKU1", "Blue", "L", 50, 250000)), null, "CATEGORY_ID", "user123"
         );
 
         mockSeller = new Seller();
@@ -84,6 +84,7 @@ class UpdateProductCommandHandlerTest {
     @Test
     @DisplayName("Cập nhật Product thất bại: Ném ngoại lệ khi Product không tồn tại")
     void shouldThrowResourceNotFoundException_WhenProductNotFound() {
+        when(sellerRepository.findByUserId("user123")).thenReturn(Optional.of(mockSeller));
         when(productRepository.findById("PRODUCT_ID")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> handler.handle(command))
@@ -94,7 +95,6 @@ class UpdateProductCommandHandlerTest {
     @Test
     @DisplayName("Cập nhật Product thất bại: Ném ngoại lệ khi Seller không tồn tại")
     void shouldThrowResourceNotFoundException_WhenSellerNotFound() {
-        when(productRepository.findById("PRODUCT_ID")).thenReturn(Optional.of(mockProduct));
         when(sellerRepository.findByUserId("user123")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> handler.handle(command))
