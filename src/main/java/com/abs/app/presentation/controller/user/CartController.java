@@ -50,7 +50,7 @@ public class CartController {
     public ResponseEntity<ApiResponse<CartItemResponseDto>> addItemToCart(@Valid @RequestBody AddToCartRequestDto request) {
         String userId = SecurityUtils.getCurrentUserId();
         CartItemResponseDto response = addToCartCommandHandler.handle(
-                new AddToCartCommand(userId, request.getProductId(), request.getSize(), request.getQuantity())
+                new AddToCartCommand(userId, request.getProductId(), request.getSkuId(), request.getQuantity())
         );
         return ResponseEntity.ok(new ApiResponse<>(true, CartConstant.ADD_ITEM_SUCCESS, response));
     }

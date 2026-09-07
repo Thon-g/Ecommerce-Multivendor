@@ -1,9 +1,11 @@
 package com.abs.app.infrastructure.mapper;
 
+import com.abs.app.application.publicapi.product.dto.SkuResponseDto;
 import com.abs.app.application.user.cart.dto.CartItemResponseDto;
 import com.abs.app.application.user.cart.dto.CartResponseDto;
 import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.CartItem;
+import com.abs.app.domain.entity.ProductSku;
 
 import java.util.stream.Collectors;
 
@@ -30,7 +32,17 @@ public class CartMapper {
         CartItemResponseDto dto = new CartItemResponseDto();
         dto.setId(cartItem.getId());
         dto.setProduct(ProductMapper.toProductResponseDto(cartItem.getProduct()));
-        dto.setSize(cartItem.getSize());
+        if (cartItem.getSku() != null) {
+            ProductSku sku = cartItem.getSku();
+            dto.setSku(new SkuResponseDto(
+                    sku.getId(),
+                    sku.getSkuCode(),
+                    sku.getColor(),
+                    sku.getSize(),
+                    sku.getQuantity(),
+                    sku.getSellingPrice()
+            ));
+        }
         dto.setQuantity(cartItem.getQuantity());
         dto.setMrpPrice(cartItem.getMrpPrice());
         dto.setSellingPrice(cartItem.getSellingPrice());
