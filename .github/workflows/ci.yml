@@ -1,6 +1,5 @@
 name: CI Pipeline
 
-# Kích hoạt pipeline khi có người push code lên nhánh dev hoặc main
 on:
   push:
     branches: [ "dev", "main" ]
@@ -8,20 +7,36 @@ on:
     branches: [ "dev", "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest # Cấp phát một máy ảo Ubuntu
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
 
     steps:
-    - name: Tải Source Code
-      uses: actions/checkout@v4
+    - name: Checkout Source Code
+      uses: actions/checkout@v7
 
-    - name: Cài đặt Java 17
-      uses: actions/setup-java@v4
+    - name: Setup Java 17
+      uses: actions/setup-java@v6
       with:
         java-version: '17'
         distribution: 'temurin'
-        cache: maven # Giúp các lần build sau nhanh hơn
+        cache: maven
 
-    - name: Build dự án với Maven
-      # Tạm thời bỏ qua Test để tránh lỗi do thiếu kết nối Database trên máy ảo
-      run: mvn clean package -DskipTests
+    - name: Run Unit Tests
+      run: mvn clean test
+
+    - name: Publish Test Results
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      if: always()
+      with:
+        files: |
+          target/surefire-reports/*.xml
+          target/failsafe-reports/*.xml
+
+    - name: Build Package
+      if: success()
+      run: mvn package -DskipTests
