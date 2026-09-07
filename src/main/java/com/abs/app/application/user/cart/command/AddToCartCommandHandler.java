@@ -8,6 +8,7 @@ import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.CartItem;
 import com.abs.app.domain.entity.Product;
+import com.abs.app.domain.entity.ProductSku;
 import com.abs.app.domain.entity.User;
 import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.CouponRepository;
@@ -52,9 +53,14 @@ public class AddToCartCommandHandler {
             return cartRepository.save(newCart);
         });
 
+        ProductSku sku = product.getSkus().stream()
+                .filter(s -> s.getId().equals(command.getSkuId()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.SKU_NOT_FOUND));
+
         // Check if item exists in cart
         Optional<CartItem> existingItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getId().equals(product.getId()) && item.getSize().equals(command.getSize()))
+                .filter(item -> item.getSku() != null && item.getSku().getId().equals(command.getSkuId()))
                 .findFirst();
 
         CartItem cartItem;
@@ -65,7 +71,7 @@ public class AddToCartCommandHandler {
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
-            cartItem.setSize(command.getSize());
+            cartItem.setSku(sku);
             cartItem.setQuantity(command.getQuantity());
             cartItem.setMrpPrice(product.getMrpPrice());
             cartItem.setSellingPrice(product.getSellingPrice());

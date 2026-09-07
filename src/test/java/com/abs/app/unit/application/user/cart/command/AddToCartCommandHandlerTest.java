@@ -57,7 +57,7 @@ class AddToCartCommandHandlerTest {
 
     @BeforeEach
     void setUp() {
-        command = new AddToCartCommand("buyer123", "prod1", "M", 2);
+        command = new AddToCartCommand("buyer123", "prod1", 1L, 2);
 
         sellerUser = new User();
         sellerUser.setUserId("seller123");
@@ -70,6 +70,11 @@ class AddToCartCommandHandlerTest {
         mockProduct.setSeller(seller);
         mockProduct.setMrpPrice(100);
         mockProduct.setSellingPrice(90);
+        ProductSku mockSku = new ProductSku();
+        mockSku.setId(1L);
+        mockSku.setSize("M");
+        mockSku.setColor("Red");
+        mockProduct.setSkus(java.util.List.of(mockSku));
 
         buyerUser = new User();
         buyerUser.setUserId("buyer123");
@@ -126,7 +131,7 @@ class AddToCartCommandHandlerTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getQuantity()).isEqualTo(2);
-        assertThat(response.getSize()).isEqualTo("M");
+        assertThat(response.getSku().getSize()).isEqualTo("M");
         assertThat(mockCart.getCartItems()).hasSize(1);
         
         verify(cartCalculatorService).recalculateCart(eq(mockCart), any());
@@ -138,7 +143,7 @@ class AddToCartCommandHandlerTest {
     void shouldIncreaseQuantity_WhenItemExistsInCartWithSameSize() {
         CartItem existingItem = new CartItem();
         existingItem.setProduct(mockProduct);
-        existingItem.setSize("M");
+        existingItem.setSku(mockProduct.getSkus().get(0));
         existingItem.setQuantity(3);
         mockCart.getCartItems().add(existingItem);
 

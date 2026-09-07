@@ -8,6 +8,6 @@ import lombok.Getter;
 public class AddToCartCommand {
     private String userId;
     private String productId;
-    private String size;
+    private Long skuId;
     private Integer quantity;
 }

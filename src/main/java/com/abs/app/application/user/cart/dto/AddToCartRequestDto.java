@@ -13,8 +13,8 @@ public class AddToCartRequestDto {
     @NotBlank(message = CartConstant.PRODUCT_ID_REQUIRED)
     private String productId;
 
-    @NotBlank(message = CartConstant.SIZE_REQUIRED)
-    private String size;
+    @NotNull(message = "SKU ID required")
+    private Long skuId;
 
     @NotNull(message = CartConstant.QUANTITY_REQUIRED)
     @Min(value = 1, message = CartConstant.QUANTITY_MIN)
