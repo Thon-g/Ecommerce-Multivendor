@@ -1,15 +1,13 @@
 package com.abs.app.application.seller.product.command;
 
 import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
+import com.abs.app.application.seller.product.dto.SkuRequestDto;
 import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.common.util.GenerateIdUtil;
-import com.abs.app.domain.entity.Category;
-import com.abs.app.domain.entity.Product;
-import com.abs.app.domain.entity.ProductImage;
-import com.abs.app.domain.entity.Seller;
+import com.abs.app.domain.entity.*;
 import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.repository.CategoryRepository;
 import com.abs.app.domain.repository.ProductRepository;
@@ -24,6 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.abs.app.application.seller.product.dto.SkuRequestDto;
+import com.abs.app.domain.entity.ProductSku;
 
 @Service
 @RequiredArgsConstructor
@@ -55,9 +56,20 @@ public class CreateProductCommandHandler {
         product.setDescription(command.getDescription());
         product.setMrpPrice(command.getMrpPrice());
         product.setSellingPrice(command.getSellingPrice());
-        product.setQuantity(command.getQuantity());
-        product.setColor(command.getColor());
-        product.setSizes(command.getSizes());
+        if (command.getSkus() != null && !command.getSkus().isEmpty()) {
+            List<ProductSku> skuEntities = new ArrayList<>();
+            for (SkuRequestDto skuDto : command.getSkus()) {
+                ProductSku sku = new ProductSku();
+                sku.setProduct(product);
+                sku.setSkuCode(skuDto.getSkuCode());
+                sku.setColor(skuDto.getColor());
+                sku.setSize(skuDto.getSize());
+                sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
+                sku.setSellingPrice(skuDto.getSellingPrice());
+                skuEntities.add(sku);
+            }
+            product.setSkus(skuEntities);
+        }
         product.setCreateAt(LocalDateTime.now());
         product.setNumRatings(0);
 

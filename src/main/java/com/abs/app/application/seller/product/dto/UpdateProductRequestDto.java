@@ -31,13 +31,7 @@ public class UpdateProductRequestDto {
     @Min(value = 0, message = ProductConstant.PRICE_MIN_INVALID)
     private Integer sellingPrice;
 
-    @NotNull(message = ProductConstant.QUANTITY_REQUIRED)
-    @Min(value = 0, message = ProductConstant.QUANTITY_MIN_INVALID)
-    private Integer quantity;
-
-    private String color;
-
-    private String sizes;
+    private List<SkuRequestDto> skus;
 
     private List<MultipartFile> images;
 

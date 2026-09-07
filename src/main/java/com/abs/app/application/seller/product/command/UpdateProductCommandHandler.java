@@ -1,6 +1,8 @@
 package com.abs.app.application.seller.product.command;
 
 import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
+import com.abs.app.application.seller.product.dto.SkuRequestDto;
+import com.abs.app.application.seller.product.command.UpdateProductCommand;
 import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.constant.SellerConstant;
@@ -9,7 +11,9 @@ import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.entity.ProductImage;
+import com.abs.app.domain.entity.ProductSku;
 import com.abs.app.domain.entity.Seller;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.repository.CategoryRepository;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.repository.SellerRepository;
@@ -28,17 +32,21 @@ import java.util.List;
 public class UpdateProductCommandHandler {
 
     private final ProductRepository productRepository;
-    private final SellerRepository sellerRepository;
     private final CategoryRepository categoryRepository;
+    private final SellerRepository sellerRepository;
     private final FileStorageService fileStorageService;
 
     @Transactional
     public ProductResponseDto handle(UpdateProductCommand command) {
-        Product product = productRepository.findById(command.getId())
-                .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
-
         Seller seller = sellerRepository.findByUserId(command.getCurrentUserId())
                 .orElseThrow(() -> new ResourceNotFoundException(SellerConstant.SELLER_NOT_FOUND));
+
+        if (seller.getStatus() != SellerStatus.ACTIVE) {
+            throw new BusinessException(SellerConstant.SELLER_NOT_ACTIVE);
+        }
+
+        Product product = productRepository.findById(command.getId())
+                .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
 
         if (!product.getSeller().getSellerId().equals(seller.getSellerId())) {
             throw new BusinessException(ProductConstant.PRODUCT_FORBIDDEN);
@@ -51,9 +59,19 @@ public class UpdateProductCommandHandler {
         product.setDescription(command.getDescription());
         product.setMrpPrice(command.getMrpPrice());
         product.setSellingPrice(command.getSellingPrice());
-        product.setQuantity(command.getQuantity());
-        product.setColor(command.getColor());
-        product.setSizes(command.getSizes());
+        if (command.getSkus() != null) {
+            product.getSkus().clear();
+            for (SkuRequestDto skuDto : command.getSkus()) {
+                ProductSku sku = new ProductSku();
+                sku.setProduct(product);
+                sku.setSkuCode(skuDto.getSkuCode());
+                sku.setColor(skuDto.getColor());
+                sku.setSize(skuDto.getSize());
+                sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
+                sku.setSellingPrice(skuDto.getSellingPrice());
+                product.getSkus().add(sku);
+            }
+        }
         product.setCategory(category);
 
         if (command.getImages() != null && !command.getImages().isEmpty()) {
