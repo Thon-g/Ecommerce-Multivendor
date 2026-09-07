@@ -27,8 +27,9 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "size", columnDefinition = "VARCHAR(20)")
-    private String size;
+    @ManyToOne
+    @JoinColumn(name = "sku_id")
+    private ProductSku sku;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity = 1;
