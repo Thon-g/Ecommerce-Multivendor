@@ -126,7 +126,7 @@ class LoginUserCommandHandlerTest {
         assertThat(response.getAccessToken()).isEqualTo("mock-access-token");
         assertThat(response.getRefreshToken()).isNull();
 
-        verify(refreshTokenService, never()).save(anyString(), anyString(), anyLong());
+        verify(refreshTokenService, never()).save(anyString(), anyString(), anyString(), anyLong());
     }
 
     @Test
@@ -138,7 +138,8 @@ class LoginUserCommandHandlerTest {
         when(userRepository.findByEmail(command.getEmail())).thenReturn(Optional.of(mockUser));
         when(passwordEncoder.matches(command.getPassword(), mockUser.getPassword())).thenReturn(true);
         when(jwtTokenProvider.generateAccessToken(mockUser.getUserId(), "CUSTOMER")).thenReturn("mock-access-token");
-        when(jwtTokenProvider.generateRefreshToken(mockUser.getUserId())).thenReturn("mock-refresh-token");
+        when(jwtTokenProvider.generateRefreshToken(eq(mockUser.getUserId()), anyString())).thenReturn("mock-refresh-token");
+        when(jwtTokenProvider.getTokenIdFromRefreshToken("mock-refresh-token")).thenReturn("mock-token-id");
 
         // Act
         AuthResponseDto response = handler.handle(command);
@@ -148,6 +149,6 @@ class LoginUserCommandHandlerTest {
         assertThat(response.getAccessToken()).isEqualTo("mock-access-token");
         assertThat(response.getRefreshToken()).isEqualTo("mock-refresh-token");
 
-        verify(refreshTokenService).save(eq("user123"), eq("mock-refresh-token"), eq(1440L)); // 86400000ms = 1440 mins
+        verify(refreshTokenService).save(eq("user123"), anyString(), eq("mock-token-id"), eq(1440L)); // 86400000ms = 1440 mins
     }
 }
