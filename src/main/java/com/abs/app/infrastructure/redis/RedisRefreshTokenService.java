@@ -15,28 +15,57 @@ public class RedisRefreshTokenService implements RefreshTokenService {
         this.redisTemplate = redisTemplate;
     }
 
-    private String buildKey(String userId) {
-        return "refresh-token:" + userId;
+    private String buildKey(String userId, String familyId) {
+        return "rt-family:" + userId + ":" + familyId;
+    }
+
+    private String buildPattern(String userId) {
+        return "rt-family:" + userId + ":*";
     }
 
     @Override
-    public void save(String userId, String refreshToken, long expirationMinutes) {
-        redisTemplate.opsForValue().set(buildKey(userId), refreshToken, expirationMinutes, TimeUnit.MINUTES);
+    public void save(String userId, String familyId, String tokenId, long expirationMinutes) {
+        redisTemplate.opsForValue().set(buildKey(userId, familyId), tokenId, expirationMinutes, TimeUnit.MINUTES);
     }
 
     @Override
-    public String get(String userId) {
-        return redisTemplate.opsForValue().get(buildKey(userId));
+    public String get(String userId, String familyId) {
+        return redisTemplate.opsForValue().get(buildKey(userId, familyId));
     }
 
     @Override
-    public void invalidate(String userId) {
-        redisTemplate.delete(buildKey(userId));
+    public void invalidateFamily(String userId, String familyId) {
+        redisTemplate.delete(buildKey(userId, familyId));
     }
 
     @Override
-    public boolean isValid(String userId, String refreshToken) {
-        String saved = get(userId);
-        return refreshToken != null && refreshToken.equals(saved);
+    public void invalidateAll(String userId) {
+        var keys = redisTemplate.keys(buildPattern(userId));
+        if (keys != null && !keys.isEmpty()) {
+            redisTemplate.delete(keys);
+        }
+    }
+
+    @Override
+    public boolean rotate(String userId, String familyId, String oldTokenId, String newTokenId, long expirationMinutes) {
+        String key = buildKey(userId, familyId);
+        String currentTokenId = redisTemplate.opsForValue().get(key);
+
+        if (currentTokenId == null) {
+            // Key expired or deleted
+            return false;
+        }
+
+        if (!currentTokenId.equals(oldTokenId)) {
+            // REUSE DETECTED!
+            // The token sent by the user does not match the latest valid token in this family.
+            // Invalidate the entire family to protect the user.
+            redisTemplate.delete(key);
+            return false;
+        }
+
+        // Token matches, proceed with rotation
+        redisTemplate.opsForValue().set(key, newTokenId, expirationMinutes, TimeUnit.MINUTES);
+        return true;
     }
 }

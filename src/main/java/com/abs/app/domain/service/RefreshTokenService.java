@@ -1,11 +1,13 @@
 package com.abs.app.domain.service;
 
 public interface RefreshTokenService {
-    void save(String userId, String refreshToken, long expirationMinutes);
+    void save(String userId, String familyId, String tokenId, long expirationMinutes);
 
-    String get(String userId);
+    String get(String userId, String familyId);
 
-    void invalidate(String userId);
+    void invalidateFamily(String userId, String familyId);
 
-    boolean isValid(String userId, String refreshToken);
+    void invalidateAll(String userId);
+
+    boolean rotate(String userId, String familyId, String oldTokenId, String newTokenId, long expirationMinutes);
 }

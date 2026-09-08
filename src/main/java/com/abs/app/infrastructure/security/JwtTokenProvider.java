@@ -62,16 +62,22 @@ public class JwtTokenProvider {
         return generateAccessToken(userId, role);
     }
 
-    public String generateRefreshToken(String userId) {
+    public String generateRefreshToken(String userId, String familyId) {
         Date now = new Date();
         return Jwts.builder()
                 .setSubject(userId)
                 .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
+                .claim("familyId", familyId)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + refreshTokenExpiration))
                 .setId(UUID.randomUUID().toString())
                 .signWith(accessTokenKey)
                 .compact();
+    }
+
+    @Deprecated
+    public String generateRefreshToken(String userId) {
+        return generateRefreshToken(userId, UUID.randomUUID().toString());
     }
 
     public String generateResetPasswordToken(String userId) {
@@ -95,6 +101,14 @@ public class JwtTokenProvider {
 
     public String getUserIdFromRefreshToken(String token) {
         return parseRefreshTokenClaims(token).getSubject();
+    }
+
+    public String getFamilyIdFromRefreshToken(String token) {
+        return parseRefreshTokenClaims(token).get("familyId", String.class);
+    }
+
+    public String getTokenIdFromRefreshToken(String token) {
+        return parseRefreshTokenClaims(token).getId();
     }
 
     public String getUserIdFromResetToken(String token) {

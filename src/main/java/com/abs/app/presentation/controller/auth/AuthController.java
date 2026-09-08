@@ -9,6 +9,10 @@ import com.abs.app.application.auth.command.VerifyOtpCommandHandler;
 import com.abs.app.application.auth.dto.RegisterRequestDto;
 import com.abs.app.application.auth.dto.ResetPasswordRequestDto;
 import com.abs.app.application.auth.dto.VerifyOtpRequestDto;
+import com.abs.app.application.auth.command.LogoutCommand;
+import com.abs.app.application.auth.command.LogoutCommandHandler;
+import com.abs.app.application.auth.command.LogoutAllCommand;
+import com.abs.app.application.auth.command.LogoutAllCommandHandler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,6 +57,8 @@ public class AuthController {
     private final ResetPasswordCommandHandler resetPasswordCommandHandler;
     private final GenerateOtpCommandHandler generateOtpCommandHandler;
     private final VerifyOtpCommandHandler verifyOtpCommandHandler;
+    private final LogoutCommandHandler logoutCommandHandler;
+    private final LogoutAllCommandHandler logoutAllCommandHandler;
     private final AuthCookieHelper authCookieHelper;
 
     @PostMapping("/login")
@@ -123,9 +129,25 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<Void>> logout() {
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request) {
+        String userId = SecurityUtils.getCurrentUserId();
+        String refreshToken = authCookieHelper.getRefreshToken(request).orElse(null);
+
+        logoutCommandHandler.handle(new LogoutCommand(userId, refreshToken));
+
         return ResponseEntity.ok()
                 .headers(authCookieHelper.clearAuthCookieHeaders())
                 .body(new ApiResponse<>(true, AuthConstant.LOGOUT_SUCCESS, null));
+    }
+
+    @PostMapping("/logout-all")
+    public ResponseEntity<ApiResponse<Void>> logoutAll() {
+        String userId = SecurityUtils.getCurrentUserId();
+
+        logoutAllCommandHandler.handle(new LogoutAllCommand(userId));
+
+        return ResponseEntity.ok()
+                .headers(authCookieHelper.clearAuthCookieHeaders())
+                .body(new ApiResponse<>(true, AuthConstant.LOGOUT_ALL_SUCCESS, null));
     }
 }

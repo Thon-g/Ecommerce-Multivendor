@@ -45,8 +45,11 @@ public class LoginUserCommandHandler {
                 .orElse("CUSTOMER");
         String accessToken = jwtTokenProvider.generateAccessToken(user.getUserId(), roleStr);
         if (command.isRememberMe()) {
-            String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUserId());
-            refreshTokenService.save(user.getUserId(), refreshToken, refreshTokenExpirationMinutes());
+            String familyId = java.util.UUID.randomUUID().toString();
+            String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUserId(), familyId);
+            String tokenId = jwtTokenProvider.getTokenIdFromRefreshToken(refreshToken);
+
+            refreshTokenService.save(user.getUserId(), familyId, tokenId, refreshTokenExpirationMinutes());
 
             return AuthResponseDto.builder()
                     .accessToken(accessToken)
