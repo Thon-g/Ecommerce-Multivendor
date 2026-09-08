@@ -51,6 +51,9 @@ class RefreshTokenCommandHandlerTest {
     private User mockUser;
     private final String REFRESH_TOKEN = "valid-refresh-token";
     private final String USER_ID = "USER_ID";
+    private final String FAMILY_ID = "FAMILY_ID";
+    private final String OLD_TOKEN_ID = "OLD_TOKEN_ID";
+    private final String NEW_TOKEN_ID = "NEW_TOKEN_ID";
 
     @BeforeEach
     void setUp() {
@@ -91,6 +94,8 @@ class RefreshTokenCommandHandlerTest {
     @DisplayName("Làm mới token thất bại: Ném ngoại lệ khi User không tồn tại")
     void shouldThrowResourceNotFoundException_WhenUserNotFound() {
         when(jwtTokenProvider.getUserIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(USER_ID);
+        when(jwtTokenProvider.getFamilyIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(FAMILY_ID);
+        when(jwtTokenProvider.getTokenIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(OLD_TOKEN_ID);
         when(jwtTokenProvider.validateRefreshToken(REFRESH_TOKEN)).thenReturn(true);
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
@@ -105,6 +110,8 @@ class RefreshTokenCommandHandlerTest {
         mockUser.setStatus(UserStatus.INACTIVE);
 
         when(jwtTokenProvider.getUserIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(USER_ID);
+        when(jwtTokenProvider.getFamilyIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(FAMILY_ID);
+        when(jwtTokenProvider.getTokenIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(OLD_TOKEN_ID);
         when(jwtTokenProvider.validateRefreshToken(REFRESH_TOKEN)).thenReturn(true);
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(mockUser));
 
@@ -114,12 +121,18 @@ class RefreshTokenCommandHandlerTest {
     }
 
     @Test
-    @DisplayName("Làm mới token thất bại: Ném ngoại lệ khi RefreshToken không khớp trong Redis")
+    @DisplayName("Làm mới token thất bại: Ném ngoại lệ khi RefreshToken không khớp trong Redis (Reuse Detection)")
     void shouldThrowUnauthorizedException_WhenTokenNotInRedis() {
         when(jwtTokenProvider.getUserIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(USER_ID);
+        when(jwtTokenProvider.getFamilyIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(FAMILY_ID);
+        when(jwtTokenProvider.getTokenIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(OLD_TOKEN_ID);
         when(jwtTokenProvider.validateRefreshToken(REFRESH_TOKEN)).thenReturn(true);
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(mockUser));
-        when(refreshTokenService.isValid(USER_ID, REFRESH_TOKEN)).thenReturn(false);
+        when(jwtTokenProvider.generateAccessToken(USER_ID, "CUSTOMER")).thenReturn("new-access-token");
+        when(jwtTokenProvider.generateRefreshToken(USER_ID, FAMILY_ID)).thenReturn("new-refresh-token");
+        when(jwtTokenProvider.getTokenIdFromRefreshToken("new-refresh-token")).thenReturn(NEW_TOKEN_ID);
+        
+        when(refreshTokenService.rotate(eq(USER_ID), eq(FAMILY_ID), eq(OLD_TOKEN_ID), eq(NEW_TOKEN_ID), anyLong())).thenReturn(false);
 
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(UnauthorizedException.class)
@@ -130,11 +143,16 @@ class RefreshTokenCommandHandlerTest {
     @DisplayName("Làm mới token thành công")
     void shouldRefreshTokenSuccessfully() {
         when(jwtTokenProvider.getUserIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(USER_ID);
+        when(jwtTokenProvider.getFamilyIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(FAMILY_ID);
+        when(jwtTokenProvider.getTokenIdFromRefreshToken(REFRESH_TOKEN)).thenReturn(OLD_TOKEN_ID);
         when(jwtTokenProvider.validateRefreshToken(REFRESH_TOKEN)).thenReturn(true);
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(mockUser));
-        when(refreshTokenService.isValid(USER_ID, REFRESH_TOKEN)).thenReturn(true);
+        
         when(jwtTokenProvider.generateAccessToken(USER_ID, "CUSTOMER")).thenReturn("new-access-token");
-        when(jwtTokenProvider.generateRefreshToken(USER_ID)).thenReturn("new-refresh-token");
+        when(jwtTokenProvider.generateRefreshToken(USER_ID, FAMILY_ID)).thenReturn("new-refresh-token");
+        when(jwtTokenProvider.getTokenIdFromRefreshToken("new-refresh-token")).thenReturn(NEW_TOKEN_ID);
+        
+        when(refreshTokenService.rotate(eq(USER_ID), eq(FAMILY_ID), eq(OLD_TOKEN_ID), eq(NEW_TOKEN_ID), anyLong())).thenReturn(true);
 
         AuthResponseDto response = handler.handle(command);
 
@@ -142,6 +160,6 @@ class RefreshTokenCommandHandlerTest {
         assertThat(response.getAccessToken()).isEqualTo("new-access-token");
         assertThat(response.getRefreshToken()).isEqualTo("new-refresh-token");
 
-        verify(refreshTokenService).save(eq(USER_ID), eq("new-refresh-token"), anyLong());
+        verify(refreshTokenService).rotate(eq(USER_ID), eq(FAMILY_ID), eq(OLD_TOKEN_ID), eq(NEW_TOKEN_ID), anyLong());
     }
 }
