@@ -11,6 +11,7 @@ import com.abs.app.domain.repository.CartItemRepository;
 import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.CouponRepository;
 import com.abs.app.domain.service.CartCalculatorService;
+import com.abs.app.domain.service.CartValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,9 @@ class UpdateCartItemQuantityCommandHandlerTest {
 
     @Mock
     private CartCalculatorService cartCalculatorService;
+
+    @Mock
+    private CartValidationService cartValidationService;
 
     @InjectMocks
     private UpdateCartItemQuantityCommandHandler handler;
@@ -91,6 +95,7 @@ class UpdateCartItemQuantityCommandHandlerTest {
     @DisplayName("Cập nhật số lượng thành công: Thay đổi số lượng, tính toán lại giỏ hàng và lưu")
     void shouldUpdateCartItemQuantitySuccessfully() {
         when(cartItemRepository.findById(1L)).thenReturn(Optional.of(mockCartItem));
+        doNothing().when(cartValidationService).validateStock(any(), anyInt());
 
         CartItemResponseDto response = handler.handle(command);
 

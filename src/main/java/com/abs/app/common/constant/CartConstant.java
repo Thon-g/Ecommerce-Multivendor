@@ -26,5 +26,6 @@ public class CartConstant {
     public static final String SIZE_REQUIRED = "Kích thước không được để trống.";
     public static final String QUANTITY_REQUIRED = "Số lượng không được để trống.";
     public static final String QUANTITY_MIN = "Số lượng phải lớn hơn hoặc bằng 1.";
+    public static final String OUT_OF_STOCK = "Vượt quá số lượng tồn kho.";
     public static final String COUPON_CODE_REQUIRED = "Mã giảm giá không được để trống.";
 }

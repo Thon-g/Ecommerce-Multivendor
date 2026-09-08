@@ -9,6 +9,7 @@ import com.abs.app.domain.repository.CartItemRepository;
 import com.abs.app.domain.repository.CartRepository;
 import com.abs.app.domain.repository.CouponRepository;
 import com.abs.app.domain.service.CartCalculatorService;
+import com.abs.app.domain.service.CartValidationService;
 import com.abs.app.infrastructure.mapper.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class UpdateCartItemQuantityCommandHandler {
     private final CartRepository cartRepository;
     private final CouponRepository couponRepository;
     private final CartCalculatorService cartCalculatorService;
+    private final CartValidationService cartValidationService;
 
     @Transactional
     public CartItemResponseDto handle(UpdateCartItemQuantityCommand command) {
@@ -33,6 +35,8 @@ public class UpdateCartItemQuantityCommandHandler {
         if (!cartItem.getUserId().equals(command.getUserId())) {
             throw new ResourceNotFoundException(CartConstant.CART_ITEM_NOT_BELONG_TO_USER);
         }
+
+        cartValidationService.validateStock(cartItem.getSku(), command.getQuantity());
 
         cartItem.setQuantity(command.getQuantity());
 
