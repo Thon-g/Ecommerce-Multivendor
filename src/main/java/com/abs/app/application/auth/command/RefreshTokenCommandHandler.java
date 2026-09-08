@@ -32,8 +32,12 @@ public class RefreshTokenCommandHandler {
     public AuthResponseDto handle(RefreshTokenCommand command) {
         String refreshToken = command.getRefreshToken();
         String userId;
+        String familyId;
+        String oldTokenId;
         try {
             userId = jwtTokenProvider.getUserIdFromRefreshToken(refreshToken);
+            familyId = jwtTokenProvider.getFamilyIdFromRefreshToken(refreshToken);
+            oldTokenId = jwtTokenProvider.getTokenIdFromRefreshToken(refreshToken);
         } catch (Exception e) {
             throw new UnauthorizedException(AuthConstant.INVALID_TOKEN);
         }
@@ -49,21 +53,19 @@ public class RefreshTokenCommandHandler {
             throw new UnauthorizedException(AuthConstant.PROHIBIT_ACCOUNT_MESSAGE);
         }
 
-        if (!refreshTokenService.isValid(user.getUserId(), refreshToken)) {
-            throw new UnauthorizedException(AuthConstant.INVALID_TOKEN);
-        }
-
         String roleStr = user.getRoles().stream()
                 .findFirst()
                 .map(role -> role.getRoleName().toString())
                 .orElse("CUSTOMER");
 
-        String newAccessToken = jwtTokenProvider.generateAccessToken(
-                userId,
-                roleStr);
+        String newAccessToken = jwtTokenProvider.generateAccessToken(userId, roleStr);
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId, familyId);
+        String newTokenId = jwtTokenProvider.getTokenIdFromRefreshToken(newRefreshToken);
 
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(userId);
-        refreshTokenService.save(userId, newRefreshToken, refreshTokenExpirationMinutes());
+        boolean isValid = refreshTokenService.rotate(userId, familyId, oldTokenId, newTokenId, refreshTokenExpirationMinutes());
+        if (!isValid) {
+            throw new UnauthorizedException(AuthConstant.INVALID_TOKEN);
+        }
         return AuthResponseDto.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)

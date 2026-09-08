@@ -32,4 +32,5 @@ public class AuthConstant {
     public static final String PHONE_NUMBER_REQUIRED = "Số điện thoại là bắt buộc";
     public static final String INVALID_PHONE_NUMBER = "Số điện thoại không hợp lệ";
     public static final String LOGOUT_SUCCESS = "Đăng xuất thành công";
+    public static final String LOGOUT_ALL_SUCCESS = "Đăng xuất khỏi tất cả thiết bị thành công";
 }
