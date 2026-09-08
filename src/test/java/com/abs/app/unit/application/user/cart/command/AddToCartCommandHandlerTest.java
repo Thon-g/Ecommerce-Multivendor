@@ -13,6 +13,7 @@ import com.abs.app.domain.repository.CouponRepository;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.domain.service.CartCalculatorService;
+import com.abs.app.domain.service.CartValidationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,9 @@ class AddToCartCommandHandlerTest {
 
     @Mock
     private CartCalculatorService cartCalculatorService;
+
+    @Mock
+    private CartValidationService cartValidationService;
 
     @InjectMocks
     private AddToCartCommandHandler handler;
@@ -127,6 +131,7 @@ class AddToCartCommandHandlerTest {
         when(productRepository.findById("prod1")).thenReturn(Optional.of(mockProduct));
         when(cartRepository.findByUserId("buyer123")).thenReturn(Optional.of(mockCart));
 
+        doNothing().when(cartValidationService).validateStock(any(), anyInt());
         CartItemResponseDto response = handler.handle(command);
 
         assertThat(response).isNotNull();
@@ -150,6 +155,7 @@ class AddToCartCommandHandlerTest {
         when(productRepository.findById("prod1")).thenReturn(Optional.of(mockProduct));
         when(cartRepository.findByUserId("buyer123")).thenReturn(Optional.of(mockCart));
 
+        doNothing().when(cartValidationService).validateStock(any(), anyInt());
         CartItemResponseDto response = handler.handle(command);
 
         assertThat(response).isNotNull();

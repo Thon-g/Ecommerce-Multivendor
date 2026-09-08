@@ -15,6 +15,7 @@ import com.abs.app.domain.repository.CouponRepository;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.domain.service.CartCalculatorService;
+import com.abs.app.domain.service.CartValidationService;
 import com.abs.app.infrastructure.mapper.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class AddToCartCommandHandler {
     private final UserRepository userRepository;
     private final CouponRepository couponRepository;
     private final CartCalculatorService cartCalculatorService;
+    private final CartValidationService cartValidationService;
 
     @Transactional
     public CartItemResponseDto handle(AddToCartCommand command) {
@@ -66,8 +68,11 @@ public class AddToCartCommandHandler {
         CartItem cartItem;
         if (existingItem.isPresent()) {
             cartItem = existingItem.get();
-            cartItem.setQuantity(cartItem.getQuantity() + command.getQuantity());
+            int newQuantity = cartItem.getQuantity() + command.getQuantity();
+            cartValidationService.validateStock(sku, newQuantity);
+            cartItem.setQuantity(newQuantity);
         } else {
+            cartValidationService.validateStock(sku, command.getQuantity());
             cartItem = new CartItem();
             cartItem.setCart(cart);
             cartItem.setProduct(product);
