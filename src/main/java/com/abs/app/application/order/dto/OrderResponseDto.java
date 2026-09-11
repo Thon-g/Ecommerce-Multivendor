@@ -20,4 +20,5 @@ public class OrderResponseDto {
     private PaymentStatus paymentStatus;
     private LocalDateTime orderDate;
     private LocalDateTime deliverDate;
+    private String cancelReason;
 }

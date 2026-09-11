@@ -41,6 +41,7 @@ public class OrderMapper {
         dto.setPaymentStatus(order.getPaymentStatus());
         dto.setOrderDate(order.getOrderDate());
         dto.setDeliverDate(order.getDeliverDate());
+        dto.setCancelReason(order.getCancelReason());
 
         if (order.getOrderItems() != null) {
             dto.setOrderItems(order.getOrderItems().stream()
