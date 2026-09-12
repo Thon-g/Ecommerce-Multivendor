@@ -34,6 +34,11 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public Page<Product> searchByCategoryIdIn(String keyword, List<String> categoryIds, String sellerId, Pageable pageable) {
+        return productJpaRepository.searchByCategoryIdIn(keyword, categoryIds, sellerId, pageable);
+    }
+
+    @Override
     public Page<Product> findByCategoryId(String categoryId, Pageable pageable) {
         return productJpaRepository.findByCategory_CategoryId(categoryId, pageable);
     }

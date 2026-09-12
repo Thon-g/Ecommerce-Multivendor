@@ -6,6 +6,7 @@ import com.abs.app.application.publicapi.product.query.GetAllProductsQueryHandle
 import com.abs.app.common.response.PageResponse;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.repository.ProductRepository;
+import com.abs.app.domain.service.CategoryTreeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class GetAllProductsQueryHandlerTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private CategoryTreeService categoryTreeService;
+
     @InjectMocks
     private GetAllProductsQueryHandler handler;
 
@@ -52,8 +56,8 @@ class GetAllProductsQueryHandlerTest {
     void shouldReturnProductsSuccessfully() {
         Page<Product> page = new PageImpl<>(List.of(mockProduct));
 
-        // sellerId is null for public API
-        when(productRepository.search(eq("keyword"), eq("CATEGORY_ID"), isNull(), any(Pageable.class)))
+        when(categoryTreeService.getAllChildCategoryIds("CATEGORY_ID")).thenReturn(List.of("CATEGORY_ID"));
+        when(productRepository.searchByCategoryIdIn(eq("keyword"), eq(List.of("CATEGORY_ID")), isNull(), any(Pageable.class)))
                 .thenReturn(page);
 
         PageResponse<ProductResponseDto> response = handler.handle(query);
@@ -65,7 +69,8 @@ class GetAllProductsQueryHandlerTest {
         assertThat(response.getPage()).isEqualTo(1);
         assertThat(response.getLimit()).isEqualTo(10);
 
-        verify(productRepository).search(eq("keyword"), eq("CATEGORY_ID"), isNull(), any(Pageable.class));
+        verify(categoryTreeService).getAllChildCategoryIds("CATEGORY_ID");
+        verify(productRepository).searchByCategoryIdIn(eq("keyword"), eq(List.of("CATEGORY_ID")), isNull(), any(Pageable.class));
     }
 
     @Test
@@ -73,7 +78,8 @@ class GetAllProductsQueryHandlerTest {
     void shouldReturnEmptyProductsSuccessfully() {
         Page<Product> page = new PageImpl<>(Collections.emptyList());
 
-        when(productRepository.search(eq("keyword"), eq("CATEGORY_ID"), isNull(), any(Pageable.class)))
+        when(categoryTreeService.getAllChildCategoryIds("CATEGORY_ID")).thenReturn(List.of("CATEGORY_ID"));
+        when(productRepository.searchByCategoryIdIn(eq("keyword"), eq(List.of("CATEGORY_ID")), isNull(), any(Pageable.class)))
                 .thenReturn(page);
 
         PageResponse<ProductResponseDto> response = handler.handle(query);
@@ -82,6 +88,7 @@ class GetAllProductsQueryHandlerTest {
         assertThat(response.getItems()).isEmpty();
         assertThat(response.getTotal()).isEqualTo(0);
 
-        verify(productRepository).search(eq("keyword"), eq("CATEGORY_ID"), isNull(), any(Pageable.class));
+        verify(categoryTreeService).getAllChildCategoryIds("CATEGORY_ID");
+        verify(productRepository).searchByCategoryIdIn(eq("keyword"), eq(List.of("CATEGORY_ID")), isNull(), any(Pageable.class));
     }
 }
