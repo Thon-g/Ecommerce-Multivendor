@@ -8,6 +8,7 @@ import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
+import com.abs.app.domain.service.CategoryTreeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class CreateCategoryCommandHandlerTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @Mock
+    private CategoryTreeService categoryTreeService;
+
     @InjectMocks
     private CreateCategoryCommandHandler handler;
 
@@ -37,7 +41,7 @@ class CreateCategoryCommandHandlerTest {
 
     @BeforeEach
     void setUp() {
-        command = new CreateCategoryCommand("Electronics", "ELEC", "PARENT_ID", 2);
+        command = new CreateCategoryCommand("Electronics", "ELEC", "PARENT_ID");
 
         parentCategory = new Category();
         parentCategory.setId("PARENT_ID");
@@ -72,7 +76,7 @@ class CreateCategoryCommandHandlerTest {
     }
 
     @Test
-    @DisplayName("Tạo Category thành công: Với ParentCategory")
+    @DisplayName("Tạo Category thành công: Với ParentCategory, level tự động = parent.level + 1")
     void shouldCreateCategorySuccessfully_WithParentCategory() {
         when(categoryRepository.existsByCategoryId("ELEC")).thenReturn(false);
         when(categoryRepository.findById("PARENT_ID")).thenReturn(Optional.of(parentCategory));
@@ -88,10 +92,11 @@ class CreateCategoryCommandHandlerTest {
         assertThat(response.getParentCategoryId()).isEqualTo("PARENT_ID");
 
         verify(categoryRepository).save(any(Category.class));
+        verify(categoryTreeService).refreshTree();
     }
 
     @Test
-    @DisplayName("Tạo Category thành công: Không có ParentCategory")
+    @DisplayName("Tạo Category thành công: Không có ParentCategory, tự động level = 1")
     void shouldCreateCategorySuccessfully_WithoutParentCategory() {
         command.setParentCategoryId(null); // No parent
 
@@ -103,10 +108,11 @@ class CreateCategoryCommandHandlerTest {
         assertThat(response).isNotNull();
         assertThat(response.getName()).isEqualTo("Electronics");
         assertThat(response.getCategoryId()).isEqualTo("ELEC");
-        assertThat(response.getLevel()).isEqualTo(2);
+        assertThat(response.getLevel()).isEqualTo(1);
         assertThat(response.getParentCategoryId()).isNull();
 
         verify(categoryRepository, never()).findById(anyString());
         verify(categoryRepository).save(any(Category.class));
+        verify(categoryTreeService).refreshTree();
     }
 }
