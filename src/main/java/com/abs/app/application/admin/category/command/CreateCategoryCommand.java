@@ -13,5 +13,4 @@ public class CreateCategoryCommand {
     private String name;
     private String categoryId;
     private String parentCategoryId;
-    private Integer level;
 }

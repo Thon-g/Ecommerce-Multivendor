@@ -7,6 +7,7 @@ import com.abs.app.common.constant.CategoryConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
+import com.abs.app.domain.service.CategoryTreeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class UpdateCategoryCommandHandlerTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private CategoryTreeService categoryTreeService;
 
     @InjectMocks
     private UpdateCategoryCommandHandler handler;
