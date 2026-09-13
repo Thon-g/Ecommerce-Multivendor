@@ -62,6 +62,9 @@ public class Order {
     @Column(name = "order_date", nullable = false, updatable = false)
     private LocalDateTime orderDate = LocalDateTime.now();
 
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
     @Column(name = "deliver_date")
     private LocalDateTime deliverDate = orderDate.plusDays(7);
 }
