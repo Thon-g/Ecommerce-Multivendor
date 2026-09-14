@@ -11,6 +11,8 @@ import com.abs.app.domain.repository.ReviewRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.infrastructure.mapper.ReviewMapper;
 import com.abs.app.common.constant.ReviewConstant;
+import com.abs.app.common.constant.UserConstant;
+import com.abs.app.common.constant.ProductConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,10 @@ public class CreateReviewCommandHandler {
     @Transactional
     public ReviewResponseDto handle(CreateReviewCommand command) {
         User user = userRepository.findById(command.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(UserConstant.USER_NOT_EXIST));
 
         Product product = productRepository.findById(command.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
 
         boolean hasPurchased = orderItemRepository.hasPurchasedProductAndDelivered(command.getUserId(), command.getProductId());
         if (!hasPurchased) {
