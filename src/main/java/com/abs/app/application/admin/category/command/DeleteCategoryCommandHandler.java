@@ -5,6 +5,7 @@ import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
+import com.abs.app.domain.service.CategoryTreeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class DeleteCategoryCommandHandler {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryTreeService categoryTreeService;
 
     @Transactional
     public void handle(DeleteCategoryCommand command) {
@@ -25,5 +27,6 @@ public class DeleteCategoryCommandHandler {
         }
 
         categoryRepository.delete(category);
+        categoryTreeService.refreshTree();
     }
 }

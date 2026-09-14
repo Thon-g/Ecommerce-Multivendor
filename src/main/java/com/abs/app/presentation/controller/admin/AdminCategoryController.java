@@ -28,8 +28,7 @@ public class AdminCategoryController {
         CreateCategoryCommand command = new CreateCategoryCommand(
                 request.getName(),
                 request.getCategoryId(),
-                request.getParentCategoryId(),
-                request.getLevel()
+                request.getParentCategoryId()
         );
         CategoryResponseDto response = createCategoryCommandHandler.handle(command);
         return ResponseEntity.status(HttpStatus.CREATED)

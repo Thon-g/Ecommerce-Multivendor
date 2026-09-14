@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.abs.app.common.response.PageResponse;
+import com.abs.app.application.publicapi.category.dto.CategoryTreeResponseDto;
+import com.abs.app.domain.service.CategoryTreeService;
 
 import java.util.List;
 
@@ -22,6 +24,13 @@ public class CategoryController {
 
     private final GetAllCategoriesQueryHandler getAllCategoriesQueryHandler;
     private final GetCategoryByIdQueryHandler getCategoryByIdQueryHandler;
+    private final CategoryTreeService categoryTreeService;
+
+    @GetMapping("/tree")
+    public ResponseEntity<ApiResponse<List<CategoryTreeResponseDto>>> getCategoryTree() {
+        List<CategoryTreeResponseDto> response = categoryTreeService.getCategoryTree();
+        return ResponseEntity.ok(new ApiResponse<>(true, CategoryConstant.CATEGORY_FETCHED_SUCCESS, response));
+    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<PageResponse<CategoryResponseDto>>> getAllCategories(

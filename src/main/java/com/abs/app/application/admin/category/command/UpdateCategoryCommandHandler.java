@@ -6,6 +6,7 @@ import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
 import com.abs.app.infrastructure.mapper.CategoryMapper;
+import com.abs.app.domain.service.CategoryTreeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UpdateCategoryCommandHandler {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryTreeService categoryTreeService;
 
     @Transactional
     public CategoryResponseDto handle(UpdateCategoryCommand command) {
@@ -24,6 +26,7 @@ public class UpdateCategoryCommandHandler {
         category.setName(command.getName());
         
         Category savedCategory = categoryRepository.save(category);
+        categoryTreeService.refreshTree();
         return CategoryMapper.toCategoryResponseDto(savedCategory);
     }
 }

@@ -20,7 +20,4 @@ public class CreateCategoryRequestDto {
     private String categoryId;
 
     private String parentCategoryId;
-
-    @NotNull(message = CategoryConstant.CATEGORY_LEVEL_REQUIRED)
-    private Integer level;
 }
