@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CancelOrderCommand {
     private String orderId;
-    private String sellerId;
+    private String userId;
     private String cancelReason;
 }
