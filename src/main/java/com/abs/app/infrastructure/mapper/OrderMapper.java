@@ -59,6 +59,10 @@ public class OrderMapper {
         dto.setMrpPrice(item.getMrpPrice());
         dto.setSellingPrice(item.getSellingPrice());
 
+        if (item.getProduct() != null) {
+            dto.setProduct(ProductMapper.toProductResponseDto(item.getProduct()));
+        }
+
         if (item.getSku() != null) {
             ProductSku sku = item.getSku();
             dto.setSku(new SkuResponseDto(
