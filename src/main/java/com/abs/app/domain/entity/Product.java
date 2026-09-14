@@ -44,6 +44,9 @@ public class Product {
     @Column(name = "num_ratings")
     private Integer numRatings;
 
+    @Column(name = "average_rating")
+    private Double averageRating = 0.0;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
