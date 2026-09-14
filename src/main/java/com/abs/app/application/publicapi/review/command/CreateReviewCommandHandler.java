@@ -10,6 +10,7 @@ import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.repository.ReviewRepository;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.infrastructure.mapper.ReviewMapper;
+import com.abs.app.common.constant.ReviewConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,21 +26,17 @@ public class CreateReviewCommandHandler {
 
     @Transactional
     public ReviewResponseDto handle(CreateReviewCommand command) {
-        // 1. Verify user exists
         User user = userRepository.findById(command.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // 2. Verify product exists
         Product product = productRepository.findById(command.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-        // 3. Verify user has purchased the product and order is DELIVERED
         boolean hasPurchased = orderItemRepository.hasPurchasedProductAndDelivered(command.getUserId(), command.getProductId());
         if (!hasPurchased) {
-            throw new IllegalStateException("You can only review a product after purchasing and receiving it.");
+            throw new IllegalStateException(ReviewConstant.ONLY_REVIEW_PURCHASED_PRODUCTS);
         }
 
-        // 4. Create and save Review
         Review review = new Review();
         review.setUser(user);
         review.setProduct(product);
@@ -49,7 +46,6 @@ public class CreateReviewCommandHandler {
 
         Review savedReview = reviewRepository.save(review);
 
-        // 5. Update Product's numRatings and averageRating
         Integer currentNumRatings = product.getNumRatings() != null ? product.getNumRatings() : 0;
         Double currentAvgRating = product.getAverageRating() != null ? product.getAverageRating() : 0.0;
 
@@ -59,7 +55,6 @@ public class CreateReviewCommandHandler {
         product.setAverageRating(newAvgRating);
         productRepository.save(product);
 
-        // 6. Return response
         return ReviewMapper.toResponseDto(savedReview);
     }
 }

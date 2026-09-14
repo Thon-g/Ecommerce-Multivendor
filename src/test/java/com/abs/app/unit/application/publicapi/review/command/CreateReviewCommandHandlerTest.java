@@ -11,6 +11,7 @@ import com.abs.app.domain.repository.OrderItemRepository;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.repository.ReviewRepository;
 import com.abs.app.domain.repository.UserRepository;
+import com.abs.app.common.constant.ReviewConstant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -98,6 +99,6 @@ class CreateReviewCommandHandlerTest {
 
         assertThatThrownBy(() -> handler.handle(command))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessage("You can only review a product after purchasing and receiving it.");
+                .hasMessage(ReviewConstant.ONLY_REVIEW_PURCHASED_PRODUCTS);
     }
 }

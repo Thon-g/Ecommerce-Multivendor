@@ -5,6 +5,7 @@ import com.abs.app.application.publicapi.review.command.CreateReviewCommandHandl
 import com.abs.app.application.publicapi.review.dto.CreateReviewRequestDto;
 import com.abs.app.application.publicapi.review.dto.ReviewResponseDto;
 import com.abs.app.common.response.ApiResponse;
+import com.abs.app.common.constant.ReviewConstant;
 import com.abs.app.infrastructure.security.SecurityUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,6 @@ public class UserReviewController {
         );
         
         ReviewResponseDto response = createReviewCommandHandler.handle(command);
-        return new ResponseEntity<>(new ApiResponse<>(true, "Review submitted successfully", response), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse<>(true, ReviewConstant.REVIEW_CREATED_SUCCESS, response), HttpStatus.CREATED);
     }
 }

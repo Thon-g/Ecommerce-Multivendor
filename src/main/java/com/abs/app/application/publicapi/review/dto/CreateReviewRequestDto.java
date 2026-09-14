@@ -8,17 +8,19 @@ import lombok.Data;
 
 import java.util.List;
 
+import com.abs.app.common.constant.ReviewConstant;
+
 @Data
 public class CreateReviewRequestDto {
-    @NotBlank(message = "Product ID is required")
+    @NotBlank(message = ReviewConstant.PRODUCT_ID_REQUIRED)
     private String productId;
 
-    @NotBlank(message = "Review text is required")
+    @NotBlank(message = ReviewConstant.REVIEW_TEXT_REQUIRED)
     private String reviewText;
 
-    @NotNull(message = "Rating is required")
-    @Min(value = 1, message = "Rating must be at least 1")
-    @Max(value = 5, message = "Rating must be at most 5")
+    @NotNull(message = ReviewConstant.RATING_REQUIRED)
+    @Min(value = 1, message = ReviewConstant.RATING_MIN)
+    @Max(value = 5, message = ReviewConstant.RATING_MAX)
     private Double rating;
 
     private List<String> productImages;

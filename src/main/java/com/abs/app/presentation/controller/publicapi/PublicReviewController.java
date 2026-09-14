@@ -5,6 +5,7 @@ import com.abs.app.application.publicapi.review.query.GetProductReviewsQuery;
 import com.abs.app.application.publicapi.review.query.GetProductReviewsQueryHandler;
 import com.abs.app.common.response.ApiResponse;
 import com.abs.app.common.response.PageResponse;
+import com.abs.app.common.constant.ReviewConstant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,6 @@ public class PublicReviewController {
         GetProductReviewsQuery query = new GetProductReviewsQuery(productId, page, limit);
         PageResponse<ReviewResponseDto> response = getProductReviewsQueryHandler.handle(query);
         
-        return ResponseEntity.ok(new ApiResponse<>(true, "Product reviews retrieved successfully", response));
+        return ResponseEntity.ok(new ApiResponse<>(true, ReviewConstant.REVIEWS_RETRIEVED_SUCCESS, response));
     }
 }
