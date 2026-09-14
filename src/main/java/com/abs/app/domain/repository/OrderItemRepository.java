@@ -4,4 +4,5 @@ import com.abs.app.domain.entity.OrderItem;
 
 public interface OrderItemRepository {
     OrderItem save(OrderItem orderItem);
+    boolean hasPurchasedProductAndDelivered(String userId, String productId);
 }
