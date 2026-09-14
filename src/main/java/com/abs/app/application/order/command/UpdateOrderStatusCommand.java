@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UpdateOrderStatusCommand {
     private String orderId;
-    private String sellerId;
+    private String userId;
     private OrderStatus orderStatus;
 }

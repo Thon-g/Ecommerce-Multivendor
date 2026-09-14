@@ -50,9 +50,9 @@ public class OrderSellerController {
     public ResponseEntity<ApiResponse<Void>> updateOrderStatus(
             @PathVariable String orderId,
             @Valid @RequestBody UpdateOrderStatusRequestDto dto) {
-        String sellerId = SecurityUtils.getCurrentUserId();
+        String userId = SecurityUtils.getCurrentUserId();
         
-        UpdateOrderStatusCommand command = new UpdateOrderStatusCommand(orderId, sellerId, dto.getOrderStatus());
+        UpdateOrderStatusCommand command = new UpdateOrderStatusCommand(orderId, userId, dto.getOrderStatus());
         updateOrderStatusCommandHandler.handle(command);
         
         return ResponseEntity.ok(new ApiResponse<>(
@@ -66,9 +66,9 @@ public class OrderSellerController {
     public ResponseEntity<ApiResponse<Void>> cancelOrder(
             @PathVariable String orderId,
             @Valid @RequestBody CancelOrderRequestDto dto) {
-        String sellerId = SecurityUtils.getCurrentUserId();
+        String userId = SecurityUtils.getCurrentUserId();
         
-        CancelOrderCommand command = new CancelOrderCommand(orderId, sellerId, dto.getCancelReason());
+        CancelOrderCommand command = new CancelOrderCommand(orderId, userId, dto.getCancelReason());
         cancelOrderCommandHandler.handle(command);
         
         return ResponseEntity.ok(new ApiResponse<>(
