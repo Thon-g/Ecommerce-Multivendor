@@ -13,15 +13,11 @@ public interface SellerRepository {
 
     Optional<Seller> findBySellerId(String sellerId);
 
-    /** Tìm gian hàng theo userId của User liên kết */
     Optional<Seller> findByUserId(String userId);
 
-    /** Kiểm tra User đã có gian hàng chưa (tránh đăng ký trùng) */
     boolean existsByUserId(String userId);
 
-    /** Ly danh sAch seller theo trng thAi (dA1ng cho Admin) */
     Page<Seller> findByStatus(SellerStatus status, Pageable pageable);
 
-    /** Tm kim seller */
     Page<Seller> search(String keyword, SellerStatus status, Pageable pageable);
 }
