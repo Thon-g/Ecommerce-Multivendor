@@ -60,16 +60,63 @@ public class UpdateProductCommandHandler {
         product.setMrpPrice(command.getMrpPrice());
         product.setSellingPrice(command.getSellingPrice());
         if (command.getSkus() != null) {
-            product.getSkus().clear();
+            List<ProductSku> existingSkus = product.getSkus();
+            List<ProductSku> updatedSkus = new ArrayList<>();
+
             for (SkuRequestDto skuDto : command.getSkus()) {
-                ProductSku sku = new ProductSku();
-                sku.setProduct(product);
-                sku.setSkuCode(skuDto.getSkuCode());
-                sku.setColor(skuDto.getColor());
-                sku.setSize(skuDto.getSize());
-                sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
-                sku.setSellingPrice(skuDto.getSellingPrice());
-                product.getSkus().add(sku);
+                ProductSku matchingSku = existingSkus.stream()
+                        .filter(s -> 
+                            (s.getSkuCode() != null && s.getSkuCode().equals(skuDto.getSkuCode())) || 
+                            (s.getColor() != null && s.getColor().equals(skuDto.getColor()) && s.getSize() != null && s.getSize().equals(skuDto.getSize()))
+                        )
+                        .findFirst()
+                        .orElse(null);
+
+                if (matchingSku != null) {
+                    matchingSku.setSkuCode(skuDto.getSkuCode());
+                    matchingSku.setColor(skuDto.getColor());
+                    matchingSku.setSize(skuDto.getSize());
+                    matchingSku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
+                    matchingSku.setSellingPrice(skuDto.getSellingPrice());
+                    updatedSkus.add(matchingSku);
+                } else {
+                    ProductSku sku = new ProductSku();
+                    sku.setProduct(product);
+                    sku.setSkuCode(skuDto.getSkuCode());
+                    sku.setColor(skuDto.getColor());
+                    sku.setSize(skuDto.getSize());
+                    sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
+                    sku.setSellingPrice(skuDto.getSellingPrice());
+                    updatedSkus.add(sku);
+                }
+            }
+
+            // Soft-disable missing SKUs by setting quantity to 0 instead of removing them
+            for (ProductSku existingSku : existingSkus) {
+                boolean isProcessed = false;
+                for (ProductSku updatedSku : updatedSkus) {
+                    if (existingSku == updatedSku) {
+                        isProcessed = true;
+                        break;
+                    }
+                }
+                if (!isProcessed) {
+                    existingSku.setQuantity(0);
+                }
+            }
+
+            // Add new SKUs
+            for (ProductSku updatedSku : updatedSkus) {
+                boolean isNew = true;
+                for (ProductSku existingSku : existingSkus) {
+                    if (existingSku == updatedSku) {
+                        isNew = false;
+                        break;
+                    }
+                }
+                if (isNew) {
+                    existingSkus.add(updatedSku);
+                }
             }
         }
         product.setCategory(category);
