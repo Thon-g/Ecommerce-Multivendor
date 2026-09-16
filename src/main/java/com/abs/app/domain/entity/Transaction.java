@@ -33,4 +33,7 @@ public class Transaction {
 
     @Column(name = "date", nullable = false, updatable = false)
     private LocalDateTime date = LocalDateTime.now();
+
+    @Column(name = "total_platform_fee")
+    private Integer totalPlatformFee = 0;
 }
