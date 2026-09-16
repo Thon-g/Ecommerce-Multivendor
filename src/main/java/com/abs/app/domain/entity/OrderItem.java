@@ -42,4 +42,7 @@ public class OrderItem {
 
     @Column(name = "user_id", nullable = false, columnDefinition = "VARCHAR(50)")
     private String userId;
+
+    @Column(name = "platform_fee")
+    private Integer platformFee = 0;
 }
