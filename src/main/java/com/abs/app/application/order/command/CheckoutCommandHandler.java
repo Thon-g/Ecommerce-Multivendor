@@ -97,6 +97,11 @@ public class CheckoutCommandHandler {
                 orderItem.setSellingPrice(cartItem.getSellingPrice());
                 orderItem.setUserId(command.getUserId());
 
+                // Calculate Platform Fee (Snapshot)
+                Double rate = getCommissionRate(cartItem.getProduct().getCategory());
+                int platformFee = (int) ((cartItem.getSellingPrice() * cartItem.getQuantity()) * (rate / 100));
+                orderItem.setPlatformFee(platformFee);
+
                 order.getOrderItems().add(orderItem);
 
                 totalSellingPrice += (cartItem.getSellingPrice() * cartItem.getQuantity());
@@ -134,5 +139,18 @@ public class CheckoutCommandHandler {
         cartRepository.save(cart);
 
         return OrderMapper.toPaymentOrderResponseDto(paymentOrder);
+    }
+
+    private Double getCommissionRate(Category category) {
+        if (category == null) {
+            return 5.0; // Global default
+        }
+        if (category.getCommissionRate() != null) {
+            return category.getCommissionRate();
+        }
+        if (category.getParentCategory() != null) {
+            return getCommissionRate(category.getParentCategory());
+        }
+        return 5.0; // Global default fallback
     }
 }
