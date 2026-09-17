@@ -56,9 +56,14 @@ class CheckoutCommandHandlerTest {
         Seller seller = new Seller();
         seller.setSellerId("seller-1");
 
+        Category category = new Category();
+        category.setId("cat-1");
+        category.setCommissionRate(10.0);
+
         Product product = new Product();
         product.setId("product-1");
         product.setSeller(seller);
+        product.setCategory(category);
 
         sku = new ProductSku();
         sku.setId(1L);
@@ -106,7 +111,13 @@ class CheckoutCommandHandlerTest {
         assertTrue(cart.getCartItems().isEmpty());
         assertEquals(0, cart.getTotalItem());
 
-        verify(orderRepository, times(1)).save(any(Order.class));
+        // Verify platform fee calculation (2 items * 100 selling price = 200 total * 10% = 20)
+        org.mockito.ArgumentCaptor<Order> orderCaptor = org.mockito.ArgumentCaptor.forClass(Order.class);
+        verify(orderRepository, times(1)).save(orderCaptor.capture());
+        Order savedOrder = orderCaptor.getValue();
+        assertEquals(1, savedOrder.getOrderItems().size());
+        assertEquals(20, savedOrder.getOrderItems().iterator().next().getPlatformFee());
+
         verify(paymentOrderRepository, times(1)).save(any(PaymentOrder.class));
         verify(productSkuRepository, times(1)).save(sku);
         verify(cartRepository, times(1)).save(cart);
