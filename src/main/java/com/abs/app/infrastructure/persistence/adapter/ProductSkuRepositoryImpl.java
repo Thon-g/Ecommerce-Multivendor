@@ -28,4 +28,9 @@ public class ProductSkuRepositoryImpl implements ProductSkuRepository {
     public ProductSku save(ProductSku sku) {
         return jpaRepository.save(sku);
     }
+
+    @Override
+    public int deductStock(Long id, int qty) {
+        return jpaRepository.deductStock(id, qty);
+    }
 }

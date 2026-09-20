@@ -7,4 +7,5 @@ public interface ProductSkuRepository {
     Optional<ProductSku> findById(Long id);
     Optional<ProductSku> findByIdWithLock(Long id);
     ProductSku save(ProductSku sku);
+    int deductStock(Long id, int qty);
 }

@@ -77,16 +77,12 @@ public class CheckoutCommandHandler {
 
             // 5. Process items, check stock, apply pessimistic lock
             for (CartItem cartItem : sellerItems) {
-                ProductSku sku = productSkuRepository.findByIdWithLock(cartItem.getSku().getId())
-                        .orElseThrow(() -> new BusinessException("Không tìm thấy SKU: " + cartItem.getSku().getId()));
-
-                if (sku.getQuantity() < cartItem.getQuantity()) {
+                int updatedRows = productSkuRepository.deductStock(cartItem.getSku().getId(), cartItem.getQuantity());
+                if (updatedRows == 0) {
                     throw new OutOfStockException(String.format(OrderConstant.OUT_OF_STOCK, cartItem.getProduct().getTitle()));
                 }
 
-                // Deduct stock
-                sku.setQuantity(sku.getQuantity() - cartItem.getQuantity());
-                productSkuRepository.save(sku);
+                ProductSku sku = cartItem.getSku();
 
                 OrderItem orderItem = new OrderItem();
                 orderItem.setOrder(order);
