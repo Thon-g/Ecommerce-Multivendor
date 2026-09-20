@@ -1,0 +1,49 @@
+package com.abs.app.presentation.controller.publicapi;
+
+import com.abs.app.application.publicapi.category.dto.CategoryResponseDto;
+import com.abs.app.application.publicapi.category.query.GetAllCategoriesQuery;
+import com.abs.app.application.publicapi.category.query.GetAllCategoriesQueryHandler;
+import com.abs.app.application.publicapi.category.query.GetCategoryByIdQuery;
+import com.abs.app.application.publicapi.category.query.GetCategoryByIdQueryHandler;
+import com.abs.app.common.constant.CategoryConstant;
+import com.abs.app.common.response.ApiResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.abs.app.common.response.PageResponse;
+import com.abs.app.application.publicapi.category.dto.CategoryTreeResponseDto;
+import com.abs.app.domain.service.CategoryTreeService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/public/categories")
+@RequiredArgsConstructor
+public class CategoryController {
+
+    private final GetAllCategoriesQueryHandler getAllCategoriesQueryHandler;
+    private final GetCategoryByIdQueryHandler getCategoryByIdQueryHandler;
+    private final CategoryTreeService categoryTreeService;
+
+    @GetMapping("/tree")
+    public ResponseEntity<ApiResponse<List<CategoryTreeResponseDto>>> getCategoryTree() {
+        List<CategoryTreeResponseDto> response = categoryTreeService.getCategoryTree();
+        return ResponseEntity.ok(new ApiResponse<>(true, CategoryConstant.CATEGORY_FETCHED_SUCCESS, response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<PageResponse<CategoryResponseDto>>> getAllCategories(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        PageResponse<CategoryResponseDto> response = getAllCategoriesQueryHandler.handle(new GetAllCategoriesQuery(keyword, page, size));
+        return ResponseEntity.ok(new ApiResponse<>(true, CategoryConstant.CATEGORIES_FETCHED_SUCCESS, response));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<CategoryResponseDto>> getCategoryById(@PathVariable String id) {
+        CategoryResponseDto response = getCategoryByIdQueryHandler.handle(new GetCategoryByIdQuery(id));
+        return ResponseEntity.ok(new ApiResponse<>(true, CategoryConstant.CATEGORY_FETCHED_SUCCESS, response));
+    }
+}
