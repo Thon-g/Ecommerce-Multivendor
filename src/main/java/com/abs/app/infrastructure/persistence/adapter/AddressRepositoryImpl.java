@@ -4,11 +4,11 @@ import com.abs.app.domain.entity.Address;
 import com.abs.app.domain.repository.AddressRepository;
 import com.abs.app.infrastructure.persistence.jpa.AddressJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Repository
+@Service
 @RequiredArgsConstructor
 public class AddressRepositoryImpl implements AddressRepository {
     private final AddressJpaRepository addressJpaRepository;

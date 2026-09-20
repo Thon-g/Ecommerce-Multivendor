@@ -30,4 +30,7 @@ public class Category {
 
     @Column(name = "level")
     private Integer level;
+
+    @Column(name = "commission_rate")
+    private Double commissionRate;
 }
