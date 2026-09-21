@@ -127,7 +127,6 @@ public class CheckoutIntegrationTest extends BaseIntegrationTest {
         cartItem.setSellingPrice(100);
         cartItem.setMrpPrice(120);
         cartItem.setUserId(user.getUserId());
-        cartItemRepository.save(cartItem);
 
         Cart cart = new Cart();
         cart.setUser(user);
