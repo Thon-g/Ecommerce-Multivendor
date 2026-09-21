@@ -89,7 +89,7 @@ class CheckoutCommandHandlerTest {
 
         when(cartRepository.findByUserId("user-1")).thenReturn(Optional.of(cart));
         when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
-        when(productSkuRepository.findByIdWithLock(1L)).thenReturn(Optional.of(sku));
+        when(productSkuRepository.deductStock(1L, 2)).thenReturn(1);
         when(paymentOrderRepository.save(any(PaymentOrder.class))).thenAnswer(i -> {
             PaymentOrder po = i.getArgument(0);
             po.setId(1L);
@@ -104,8 +104,8 @@ class CheckoutCommandHandlerTest {
         assertEquals(PaymentOrderStatus.SUCCESS, response.getStatus());
         assertEquals(200L, response.getAmount());
 
-        // Verify stock deducted
-        assertEquals(8, sku.getQuantity());
+        // Verify deductStock was called (native query doesn't modify in-memory object)
+        verify(productSkuRepository, times(1)).deductStock(1L, 2);
 
         // Verify Cart cleared
         assertTrue(cart.getCartItems().isEmpty());
@@ -119,7 +119,6 @@ class CheckoutCommandHandlerTest {
         assertEquals(20, savedOrder.getOrderItems().iterator().next().getPlatformFee());
 
         verify(paymentOrderRepository, times(1)).save(any(PaymentOrder.class));
-        verify(productSkuRepository, times(1)).save(sku);
         verify(cartRepository, times(1)).save(cart);
     }
 
@@ -131,7 +130,7 @@ class CheckoutCommandHandlerTest {
 
         when(cartRepository.findByUserId("user-1")).thenReturn(Optional.of(cart));
         when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
-        when(productSkuRepository.findByIdWithLock(1L)).thenReturn(Optional.of(sku));
+        when(productSkuRepository.deductStock(1L, 15)).thenReturn(0);
 
         // Act & Assert
         assertThrows(OutOfStockException.class, () -> checkoutCommandHandler.handle(command));

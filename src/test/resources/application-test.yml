@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    # URL, username, password will be dynamically injected by Testcontainers
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Disable external dependencies if not tested yet
+  mail:
+    host: localhost
+    port: 1025
+
+  data:
+    redis:
+      # If Redis is needed, we should mock it or use Testcontainers for Redis too
+      # For now, let's use a dummy host if not heavily testing redis
+      host: localhost
+      port: 6379
+
+server:
+  port: 0 # Random port for tests
+
+security:
+  jwt:
+    secret: test-secret-key-that-is-at-least-32-bytes-long-for-hs256
+    reset-secret: test-reset-secret-key-that-is-at-least-32-bytes-long
+    expiration: 3600000
+    refresh-expiration: 86400000
+    reset-expiration: 600000
