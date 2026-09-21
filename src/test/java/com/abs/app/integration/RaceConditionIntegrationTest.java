@@ -193,7 +193,8 @@ public class RaceConditionIntegrationTest extends BaseIntegrationTest {
                     // Out of stock exception is expected for 5 users
                     failCount.incrementAndGet();
                 } catch (Exception e) {
-                    // Any other DB Deadlock or Constraint errors go here
+                    // Log unexpected exceptions for CI debugging
+                    System.err.println("[Thread " + index + "] Unexpected error: " + e.getClass().getSimpleName() + " - " + e.getMessage());
                     failCount.incrementAndGet();
                 } finally {
                     doneLatch.countDown();
