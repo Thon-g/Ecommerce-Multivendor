@@ -104,8 +104,8 @@ class CheckoutCommandHandlerTest {
         assertEquals(PaymentOrderStatus.SUCCESS, response.getStatus());
         assertEquals(200L, response.getAmount());
 
-        // Verify stock deducted
-        assertEquals(8, sku.getQuantity());
+        // Verify deductStock was called (native query doesn't modify in-memory object)
+        verify(productSkuRepository, times(1)).deductStock(1L, 2);
 
         // Verify Cart cleared
         assertTrue(cart.getCartItems().isEmpty());

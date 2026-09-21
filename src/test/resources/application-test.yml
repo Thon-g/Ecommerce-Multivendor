@@ -25,3 +25,11 @@ spring:
 
 server:
   port: 0 # Random port for tests
+
+security:
+  jwt:
+    secret: test-secret-key-that-is-at-least-32-bytes-long-for-hs256
+    reset-secret: test-reset-secret-key-that-is-at-least-32-bytes-long
+    expiration: 3600000
+    refresh-expiration: 86400000
+    reset-expiration: 600000
