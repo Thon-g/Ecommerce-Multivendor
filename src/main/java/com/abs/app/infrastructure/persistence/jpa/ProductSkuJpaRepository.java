@@ -16,7 +16,7 @@ public interface ProductSkuJpaRepository extends JpaRepository<ProductSku, Long>
     @Query("SELECT s FROM ProductSku s WHERE s.id = :id")
     Optional<ProductSku> findByIdWithLock(@Param("id") Long id);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Modifying(flushAutomatically = true)
     @Query("UPDATE ProductSku s SET s.quantity = s.quantity - :qty WHERE s.id = :id AND s.quantity >= :qty")
     int deductStock(@Param("id") Long id, @Param("qty") int qty);
 }
