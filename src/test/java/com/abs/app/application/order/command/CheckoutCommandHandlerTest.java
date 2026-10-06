@@ -3,6 +3,7 @@ package com.abs.app.application.order.command;
 import com.abs.app.application.order.dto.PaymentOrderResponseDto;
 import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.OutOfStockException;
+import com.abs.app.application.category.CategoryService;
 import com.abs.app.domain.entity.*;
 import com.abs.app.domain.entity.enums.PaymentOrderStatus;
 import com.abs.app.domain.repository.*;
@@ -34,6 +35,8 @@ class CheckoutCommandHandlerTest {
     private OrderRepository orderRepository;
     @Mock
     private PaymentOrderRepository paymentOrderRepository;
+    @Mock
+    private CategoryService categoryService;
 
     @InjectMocks
     private CheckoutCommandHandler checkoutCommandHandler;
@@ -90,6 +93,7 @@ class CheckoutCommandHandlerTest {
         when(cartRepository.findByUserId("user-1")).thenReturn(Optional.of(cart));
         when(addressRepository.findById(1L)).thenReturn(Optional.of(address));
         when(productSkuRepository.deductStock(1L, 2)).thenReturn(1);
+        when(categoryService.getCommissionRate(any())).thenReturn(10.0);
         when(paymentOrderRepository.save(any(PaymentOrder.class))).thenAnswer(i -> {
             PaymentOrder po = i.getArgument(0);
             po.setId(1L);

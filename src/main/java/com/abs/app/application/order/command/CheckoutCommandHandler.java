@@ -11,6 +11,7 @@ import com.abs.app.domain.entity.enums.PaymentMethod;
 import com.abs.app.domain.entity.enums.PaymentOrderStatus;
 import com.abs.app.domain.entity.enums.PaymentStatus;
 import com.abs.app.domain.repository.*;
+import com.abs.app.application.category.CategoryService;
 import com.abs.app.infrastructure.mapper.OrderMapper;
 import com.abs.app.common.util.GenerateIdUtil;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class CheckoutCommandHandler {
     private final ProductSkuRepository productSkuRepository;
     private final OrderRepository orderRepository;
     private final PaymentOrderRepository paymentOrderRepository;
+    private final CategoryService categoryService;
 
     @Transactional
     public PaymentOrderResponseDto handle(CheckoutCommand command) {
@@ -94,7 +96,7 @@ public class CheckoutCommandHandler {
                 orderItem.setUserId(command.getUserId());
 
                 // Calculate Platform Fee (Snapshot)
-                Double rate = getCommissionRate(cartItem.getProduct().getCategory());
+                Double rate = categoryService.getCommissionRate(cartItem.getProduct().getCategory());
                 int platformFee = (int) ((cartItem.getSellingPrice() * cartItem.getQuantity()) * (rate / 100));
                 orderItem.setPlatformFee(platformFee);
 
@@ -135,18 +137,5 @@ public class CheckoutCommandHandler {
         cartRepository.save(cart);
 
         return OrderMapper.toPaymentOrderResponseDto(paymentOrder);
-    }
-
-    private Double getCommissionRate(Category category) {
-        if (category == null) {
-            return 5.0; // Global default
-        }
-        if (category.getCommissionRate() != null) {
-            return category.getCommissionRate();
-        }
-        if (category.getParentCategory() != null) {
-            return getCommissionRate(category.getParentCategory());
-        }
-        return 5.0; // Global default fallback
     }
 }
