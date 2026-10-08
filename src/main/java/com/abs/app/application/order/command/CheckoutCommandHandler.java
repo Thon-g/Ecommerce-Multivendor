@@ -11,9 +11,12 @@ import com.abs.app.domain.entity.enums.PaymentMethod;
 import com.abs.app.domain.entity.enums.PaymentOrderStatus;
 import com.abs.app.domain.entity.enums.PaymentStatus;
 import com.abs.app.domain.repository.*;
+import com.abs.app.domain.service.StockCacheService;
+import com.abs.app.application.category.CategoryService;
 import com.abs.app.infrastructure.mapper.OrderMapper;
 import com.abs.app.common.util.GenerateIdUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CheckoutCommandHandler {
 
     private final CartRepository cartRepository;
@@ -29,10 +33,11 @@ public class CheckoutCommandHandler {
     private final ProductSkuRepository productSkuRepository;
     private final OrderRepository orderRepository;
     private final PaymentOrderRepository paymentOrderRepository;
+    private final CategoryService categoryService;
+    private final StockCacheService stockCacheService;
 
     @Transactional
     public PaymentOrderResponseDto handle(CheckoutCommand command) {
-        // 1. Fetch Cart
         Cart cart = cartRepository.findByUserId(command.getUserId())
                 .orElseThrow(() -> new BusinessException(CartConstant.CART_NOT_FOUND));
 
@@ -40,7 +45,6 @@ public class CheckoutCommandHandler {
             throw new BusinessException(OrderConstant.CART_EMPTY);
         }
 
-        // 2. Fetch Address
         Address address = addressRepository.findById(command.getAddressId())
                 .orElseThrow(() -> new BusinessException(OrderConstant.INVALID_ADDRESS));
 
@@ -51,81 +55,100 @@ public class CheckoutCommandHandler {
             throw new BusinessException(OrderConstant.INVALID_ADDRESS);
         }
 
-        // 3. Group CartItems by Seller
         Map<String, List<CartItem>> itemsBySeller = cart.getCartItems().stream()
                 .collect(Collectors.groupingBy(item -> item.getProduct().getSeller().getSellerId()));
 
         Set<Order> createdOrders = new HashSet<>();
         Long totalPaymentAmount = 0L;
 
-        // 4. Process each seller's order
-        for (Map.Entry<String, List<CartItem>> entry : itemsBySeller.entrySet()) {
-            String sellerId = entry.getKey();
-            List<CartItem> sellerItems = entry.getValue();
+        List<Map.Entry<Long, Integer>> redisDeductedSkus = new ArrayList<>();
 
-            Order order = new Order();
-            order.setOrderId(GenerateIdUtil.GenerateId(OrderConstant.SALT, OrderConstant.LIMIT));
-            order.setUser(cart.getUser());
-            order.setSellerId(sellerId);
-            order.setShippingAddress(address);
-            order.setOrderStatus(OrderStatus.PLACED); // COD -> placed immediately
-            order.setPaymentStatus(PaymentStatus.PENDING); // Not paid yet
+        try {
+            for (Map.Entry<String, List<CartItem>> entry : itemsBySeller.entrySet()) {
+                String sellerId = entry.getKey();
+                List<CartItem> sellerItems = entry.getValue();
 
-            int totalSellingPrice = 0;
-            double totalMrpPrice = 0;
-            int totalItem = 0;
+                Order order = new Order();
+                order.setOrderId(GenerateIdUtil.GenerateId(OrderConstant.SALT, OrderConstant.LIMIT));
+                order.setUser(cart.getUser());
+                order.setSellerId(sellerId);
+                order.setShippingAddress(address);
+                order.setOrderStatus(OrderStatus.PLACED);
+                order.setPaymentStatus(PaymentStatus.PENDING);
 
-            // 5. Process items, check stock, apply pessimistic lock
-            for (CartItem cartItem : sellerItems) {
-                int updatedRows = productSkuRepository.deductStock(cartItem.getSku().getId(), cartItem.getQuantity());
-                if (updatedRows == 0) {
-                    throw new OutOfStockException(String.format(OrderConstant.OUT_OF_STOCK, cartItem.getProduct().getTitle()));
+                int totalSellingPrice = 0;
+                double totalMrpPrice = 0;
+                int totalItem = 0;
+
+                for (CartItem cartItem : sellerItems) {
+                    Long skuId = cartItem.getSku().getId();
+                    int qty = cartItem.getQuantity();
+                    int dbStock = cartItem.getSku().getQuantity();
+
+                    long redisResult = stockCacheService.deductStock(skuId, qty, dbStock);
+
+                    if (redisResult == 0) {
+                        throw new OutOfStockException(
+                                String.format(OrderConstant.OUT_OF_STOCK, cartItem.getProduct().getTitle()));
+                    }
+
+                    if (redisResult == 1) {
+                        redisDeductedSkus.add(Map.entry(skuId, qty));
+                    }
+
+                    int updatedRows = productSkuRepository.deductStock(skuId, qty);
+                    if (updatedRows == 0) {
+                        throw new OutOfStockException(
+                                String.format(OrderConstant.OUT_OF_STOCK, cartItem.getProduct().getTitle()));
+                    }
+
+                    ProductSku sku = cartItem.getSku();
+
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(cartItem.getProduct());
+                    orderItem.setSku(sku);
+                    orderItem.setQuantity(qty);
+                    orderItem.setMrpPrice(cartItem.getMrpPrice());
+                    orderItem.setSellingPrice(cartItem.getSellingPrice());
+                    orderItem.setUserId(command.getUserId());
+
+                    Double rate = categoryService.getCommissionRate(cartItem.getProduct().getCategory());
+                    int platformFee = (int) ((cartItem.getSellingPrice() * qty) * (rate / 100));
+                    orderItem.setPlatformFee(platformFee);
+
+                    order.getOrderItems().add(orderItem);
+
+                    totalSellingPrice += (cartItem.getSellingPrice() * qty);
+                    totalMrpPrice += (cartItem.getMrpPrice() * qty);
+                    totalItem += qty;
                 }
 
-                ProductSku sku = cartItem.getSku();
+                order.setTotalSellingPrice(totalSellingPrice);
+                order.setTotalMrpPrice(totalMrpPrice);
+                order.setTotalItem(totalItem);
+                order.setDiscount((int) (totalMrpPrice - totalSellingPrice));
 
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(order);
-                orderItem.setProduct(cartItem.getProduct());
-                orderItem.setSku(sku);
-                orderItem.setQuantity(cartItem.getQuantity());
-                orderItem.setMrpPrice(cartItem.getMrpPrice());
-                orderItem.setSellingPrice(cartItem.getSellingPrice());
-                orderItem.setUserId(command.getUserId());
-
-                // Calculate Platform Fee (Snapshot)
-                Double rate = getCommissionRate(cartItem.getProduct().getCategory());
-                int platformFee = (int) ((cartItem.getSellingPrice() * cartItem.getQuantity()) * (rate / 100));
-                orderItem.setPlatformFee(platformFee);
-
-                order.getOrderItems().add(orderItem);
-
-                totalSellingPrice += (cartItem.getSellingPrice() * cartItem.getQuantity());
-                totalMrpPrice += (cartItem.getMrpPrice() * cartItem.getQuantity());
-                totalItem += cartItem.getQuantity();
+                orderRepository.save(order);
+                createdOrders.add(order);
+                totalPaymentAmount += totalSellingPrice;
             }
-
-            order.setTotalSellingPrice(totalSellingPrice);
-            order.setTotalMrpPrice(totalMrpPrice);
-            order.setTotalItem(totalItem);
-            order.setDiscount((int) (totalMrpPrice - totalSellingPrice));
-
-            orderRepository.save(order);
-            createdOrders.add(order);
-            totalPaymentAmount += totalSellingPrice;
+        } catch (Exception e) {
+            for (Map.Entry<Long, Integer> deducted : redisDeductedSkus) {
+                stockCacheService.restoreStock(deducted.getKey(), deducted.getValue());
+            }
+            throw e;
         }
 
-        // 6. Create PaymentOrder
         PaymentOrder paymentOrder = new PaymentOrder();
         paymentOrder.setAmount(totalPaymentAmount);
         paymentOrder.setUser(cart.getUser());
         paymentOrder.setOrders(createdOrders);
         paymentOrder.setPaymentMethod(PaymentMethod.CASH);
-        paymentOrder.setStatus(PaymentOrderStatus.SUCCESS); // COD is technically "success" in placing the order
+        paymentOrder.setStatus(PaymentOrderStatus.SUCCESS);
 
         paymentOrder = paymentOrderRepository.save(paymentOrder);
 
-        // 7. Clear Cart
         cart.getCartItems().clear();
         cart.setTotalItem(0);
         cart.setTotalMrpPrice(0);
@@ -135,18 +158,5 @@ public class CheckoutCommandHandler {
         cartRepository.save(cart);
 
         return OrderMapper.toPaymentOrderResponseDto(paymentOrder);
-    }
-
-    private Double getCommissionRate(Category category) {
-        if (category == null) {
-            return 5.0; // Global default
-        }
-        if (category.getCommissionRate() != null) {
-            return category.getCommissionRate();
-        }
-        if (category.getParentCategory() != null) {
-            return getCommissionRate(category.getParentCategory());
-        }
-        return 5.0; // Global default fallback
     }
 }
