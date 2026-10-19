@@ -7,4 +7,5 @@ import org.springframework.data.domain.Pageable;
 public interface TransactionRepository {
     Transaction save(Transaction transaction);
     Page<Transaction> findBySellerId(String sellerId, Pageable pageable);
+    Page<Transaction> findAll(Pageable pageable);
 }

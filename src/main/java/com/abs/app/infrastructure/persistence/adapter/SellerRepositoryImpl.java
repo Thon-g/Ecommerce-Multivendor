@@ -46,4 +46,9 @@ public class SellerRepositoryImpl implements SellerRepository {
     public Page<Seller> search(String keyword, SellerStatus status, Pageable pageable) {
         return sellerJpaRepository.search(keyword, status, pageable);
     }
+
+    @Override
+    public long count() {
+        return sellerJpaRepository.count();
+    }
 }
