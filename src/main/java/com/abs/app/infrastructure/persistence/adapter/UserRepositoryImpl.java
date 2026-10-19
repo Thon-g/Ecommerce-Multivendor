@@ -43,4 +43,9 @@ public class UserRepositoryImpl implements UserRepository {
     public void save(User user) {
         userJpaRepository.save(user);
     }
+
+    @Override
+    public long count() {
+        return userJpaRepository.count();
+    }
 }
