@@ -1,8 +1,8 @@
 package com.abs.app.common.constant;
 
 public class ProductConstant {
-    private ProductConstant() {
-    }
+
+    public static final String DEFAULT_PRODUCT_NAME = "Sản phẩm";
 
     // Success messages
     public static final String PRODUCT_CREATED_SUCCESS = "Tạo sản phẩm thành công.";
@@ -15,6 +15,7 @@ public class ProductConstant {
     public static final String PRODUCT_NOT_FOUND = "Không tìm thấy sản phẩm.";
     public static final String SKU_NOT_FOUND = "Không tìm thấy SKU của sản phẩm.";
     public static final String PRODUCT_FORBIDDEN = "Bạn không có quyền chỉnh sửa/xóa sản phẩm của người khác.";
+    public static final String PRODUCT_SELLER_INACTIVE = "Sản phẩm không khả dụng do gian hàng tạm ngưng hoạt động hoặc đã bị khóa.";
 
     // Validation messages
     public static final String TITLE_REQUIRED = "Tên sản phẩm không được để trống.";

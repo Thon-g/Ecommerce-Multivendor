@@ -2,6 +2,10 @@ package com.abs.app.domain.repository;
 
 import com.abs.app.domain.entity.User;
 
+import com.abs.app.domain.entity.enums.UserStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +23,6 @@ public interface UserRepository {
     void save(User user);
 
     long count();
+
+    Page<User> search(String keyword, UserStatus status, Pageable pageable);
 }

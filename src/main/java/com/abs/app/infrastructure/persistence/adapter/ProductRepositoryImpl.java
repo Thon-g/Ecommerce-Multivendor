@@ -1,6 +1,7 @@
 package com.abs.app.infrastructure.persistence.adapter;
 
 import com.abs.app.domain.entity.Product;
+import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.infrastructure.persistence.jpa.ProductJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Page<Product> findByCategoryId(String categoryId, Pageable pageable) {
-        return productJpaRepository.findByCategory_CategoryId(categoryId, pageable);
+        return productJpaRepository.findByCategory_CategoryIdAndSeller_Status(categoryId, SellerStatus.ACTIVE, pageable);
     }
 
     @Override

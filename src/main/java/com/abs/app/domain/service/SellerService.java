@@ -9,6 +9,7 @@ import com.abs.app.domain.entity.Seller;
 import com.abs.app.domain.entity.User;
 import com.abs.app.domain.entity.enums.RoleUser;
 import com.abs.app.domain.entity.enums.SellerStatus;
+import com.abs.app.domain.entity.enums.UserStatus;
 import com.abs.app.domain.repository.RoleRepository;
 import com.abs.app.domain.repository.SellerRepository;
 import com.abs.app.domain.repository.UserRepository;
@@ -105,5 +106,22 @@ public class SellerService {
         if (roleChanged) {
             userRepository.save(user);
         }
+    }
+
+    public void validateSellerActive(Seller seller) {
+        if (seller == null || seller.getStatus() != SellerStatus.ACTIVE) {
+            throw new BusinessException(SellerConstant.SELLER_NOT_ACTIVE);
+        }
+    }
+
+    @Transactional
+    public void handleUserStatusChange(String userId, UserStatus newUserStatus) {
+        sellerRepository.findByUserId(userId).ifPresent(seller -> {
+            if (newUserStatus == UserStatus.BANNED && seller.getStatus() != SellerStatus.BANNED) {
+                seller.setStatus(SellerStatus.BANNED);
+                sellerRepository.save(seller);
+                synchronizeUserRoles(seller.getUser(), SellerStatus.BANNED);
+            }
+        });
     }
 }

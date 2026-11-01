@@ -36,6 +36,7 @@ public class UpdateCartItemQuantityCommandHandler {
             throw new ResourceNotFoundException(CartConstant.CART_ITEM_NOT_BELONG_TO_USER);
         }
 
+        cartValidationService.validateSellerActiveForProduct(cartItem.getProduct());
         cartValidationService.validateStock(cartItem.getSku(), command.getQuantity());
 
         cartItem.setQuantity(command.getQuantity());
