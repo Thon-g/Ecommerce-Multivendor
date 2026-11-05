@@ -14,6 +14,7 @@ import java.util.List;
 public interface ProductJpaRepository extends JpaRepository<Product, String> {
     Page<Product> findBySeller_SellerId(String sellerId, Pageable pageable);
     Page<Product> findByCategory_CategoryIdAndSeller_Status(String categoryId, com.abs.app.domain.entity.enums.SellerStatus status, Pageable pageable);
+    boolean existsByCategory_Id(String categoryId);
 
     @Query("""
         SELECT p FROM Product p 

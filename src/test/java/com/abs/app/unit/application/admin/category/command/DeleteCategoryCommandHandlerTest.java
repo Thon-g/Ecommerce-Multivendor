@@ -7,6 +7,7 @@ import com.abs.app.common.exception.BusinessException;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.repository.CategoryRepository;
+import com.abs.app.domain.repository.ProductRepository;
 import com.abs.app.domain.service.CategoryTreeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +27,9 @@ class DeleteCategoryCommandHandlerTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @Mock
     private CategoryTreeService categoryTreeService;
@@ -70,13 +74,29 @@ class DeleteCategoryCommandHandlerTest {
     }
 
     @Test
+    @DisplayName("Xóa Category thất bại: Ném ngoại lệ khi Category có sản phẩm")
+    void shouldThrowBusinessException_WhenCategoryHasProducts() {
+        when(categoryRepository.findById("CATEGORY_ID")).thenReturn(Optional.of(mockCategory));
+        when(categoryRepository.existsByParentCategoryId("CATEGORY_ID")).thenReturn(false);
+        when(productRepository.existsByCategoryId("CATEGORY_ID")).thenReturn(true);
+
+        assertThatThrownBy(() -> handler.handle(command))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(CategoryConstant.CATEGORY_HAS_PRODUCTS);
+
+        verify(categoryRepository, never()).delete(any());
+    }
+
+    @Test
     @DisplayName("Xóa Category thành công")
     void shouldDeleteCategorySuccessfully() {
         when(categoryRepository.findById("CATEGORY_ID")).thenReturn(Optional.of(mockCategory));
         when(categoryRepository.existsByParentCategoryId("CATEGORY_ID")).thenReturn(false);
+        when(productRepository.existsByCategoryId("CATEGORY_ID")).thenReturn(false);
 
         handler.handle(command);
 
         verify(categoryRepository).delete(mockCategory);
+        verify(categoryTreeService).refreshTree();
     }
 }

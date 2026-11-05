@@ -15,4 +15,5 @@ public interface ProductRepository {
     Page<Product> findByCategoryId(String categoryId, Pageable pageable);
     Page<Product> findBySellerId(String sellerId, Pageable pageable);
     void delete(Product product);
+    boolean existsByCategoryId(String categoryId);
 }

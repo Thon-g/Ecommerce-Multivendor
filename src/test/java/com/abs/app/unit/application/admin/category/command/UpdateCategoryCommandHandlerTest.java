@@ -40,7 +40,7 @@ class UpdateCategoryCommandHandlerTest {
 
     @BeforeEach
     void setUp() {
-        command = new UpdateCategoryCommand("CATEGORY_ID", "Updated Category");
+        command = new UpdateCategoryCommand("CATEGORY_ID", "Updated Category", 10.0);
 
         mockCategory = new Category();
         mockCategory.setId("CATEGORY_ID");

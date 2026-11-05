@@ -41,7 +41,7 @@ class CreateCategoryCommandHandlerTest {
 
     @BeforeEach
     void setUp() {
-        command = new CreateCategoryCommand("Electronics", "ELEC", "PARENT_ID");
+        command = new CreateCategoryCommand("Electronics", "ELEC", "PARENT_ID", 5.0);
 
         parentCategory = new Category();
         parentCategory.setId("PARENT_ID");

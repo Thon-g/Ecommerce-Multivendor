@@ -52,4 +52,9 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void delete(Product product) {
         productJpaRepository.delete(product);
     }
+
+    @Override
+    public boolean existsByCategoryId(String categoryId) {
+        return productJpaRepository.existsByCategory_Id(categoryId);
+    }
 }
