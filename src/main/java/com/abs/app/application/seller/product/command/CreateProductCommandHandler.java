@@ -58,15 +58,23 @@ public class CreateProductCommandHandler {
         product.setSellingPrice(command.getSellingPrice());
         if (command.getSkus() != null && !command.getSkus().isEmpty()) {
             List<ProductSku> skuEntities = new ArrayList<>();
+            int skuIndex = 1;
             for (SkuRequestDto skuDto : command.getSkus()) {
                 ProductSku sku = new ProductSku();
                 sku.setProduct(product);
-                sku.setSkuCode(skuDto.getSkuCode());
+                
+                String userSku = skuDto.getSkuCode();
+                if (userSku == null || userSku.trim().isEmpty()) {
+                    userSku = "VAR-" + skuIndex;
+                }
+                sku.setSkuCode(product.getId() + "-" + userSku);
+                
                 sku.setColor(skuDto.getColor());
                 sku.setSize(skuDto.getSize());
                 sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
                 sku.setSellingPrice(skuDto.getSellingPrice());
                 skuEntities.add(sku);
+                skuIndex++;
             }
             product.setSkus(skuEntities);
         }

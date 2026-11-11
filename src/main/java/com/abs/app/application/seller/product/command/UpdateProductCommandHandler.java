@@ -72,8 +72,16 @@ public class UpdateProductCommandHandler {
                         .findFirst()
                         .orElse(null);
 
+                String userSku = skuDto.getSkuCode();
+                if (userSku == null || userSku.trim().isEmpty()) {
+                    userSku = "VAR-" + java.util.UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+                }
+                String finalSkuCode = userSku.startsWith(product.getId() + "-") 
+                                        ? userSku 
+                                        : product.getId() + "-" + userSku;
+
                 if (matchingSku != null) {
-                    matchingSku.setSkuCode(skuDto.getSkuCode());
+                    matchingSku.setSkuCode(finalSkuCode);
                     matchingSku.setColor(skuDto.getColor());
                     matchingSku.setSize(skuDto.getSize());
                     matchingSku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
@@ -82,7 +90,7 @@ public class UpdateProductCommandHandler {
                 } else {
                     ProductSku sku = new ProductSku();
                     sku.setProduct(product);
-                    sku.setSkuCode(skuDto.getSkuCode());
+                    sku.setSkuCode(finalSkuCode);
                     sku.setColor(skuDto.getColor());
                     sku.setSize(skuDto.getSize());
                     sku.setQuantity(skuDto.getQuantity() != null ? skuDto.getQuantity() : 0);
