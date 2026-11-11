@@ -23,6 +23,9 @@ public class FileStorageService {
     private static final String SELLER_IMAGE_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/sellers/";
     private static final String SELLER_IMAGE_PUBLIC_PATH = "/images/uploads/sellers/";
 
+    private static final String BANNER_IMAGE_UPLOAD_DIR = System.getProperty("user.dir") + "/images/uploads/banners/";
+    private static final String BANNER_IMAGE_PUBLIC_PATH = "/images/uploads/banners/";
+
     public String storeAvatar(MultipartFile file, String userId) {
         return storeImage(file, userId, AVATAR_UPLOAD_DIR, AVATAR_PUBLIC_PATH);
     }
@@ -39,6 +42,9 @@ public class FileStorageService {
         return storeImage(file, headString, SELLER_IMAGE_UPLOAD_DIR, SELLER_IMAGE_PUBLIC_PATH);
     }
 
+    public String storeBanner(MultipartFile file, String headString) {
+        return storeImage(file, headString, BANNER_IMAGE_UPLOAD_DIR, BANNER_IMAGE_PUBLIC_PATH);
+    }
 
     private String storeImage(MultipartFile file, String headString, String path, String publicPath) {
         if (file == null || file.isEmpty()) {

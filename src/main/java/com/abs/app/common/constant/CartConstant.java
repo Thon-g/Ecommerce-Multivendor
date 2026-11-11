@@ -12,6 +12,7 @@ public class CartConstant {
     public static final String COUPON_ALREADY_USED = "Bạn đã sử dụng mã giảm giá này rồi.";
 
     public static final String CANNOT_ADD_OWN_PRODUCT = "Bạn không thể thêm sản phẩm của chính mình vào giỏ hàng.";
+    public static final String SELLER_NOT_ACTIVE = "Cửa hàng hiện đang tạm ngưng hoạt động hoặc đã bị khóa.";
 
     // API Success Messages
     public static final String FETCH_CART_SUCCESS = "Lấy thông tin giỏ hàng thành công.";

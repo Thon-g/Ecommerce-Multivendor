@@ -19,4 +19,5 @@ public class CartItemResponseDto {
     private Integer mrpPrice;
     private Integer sellingPrice;
     private String userId;
+    private boolean isAvailable = true;
 }

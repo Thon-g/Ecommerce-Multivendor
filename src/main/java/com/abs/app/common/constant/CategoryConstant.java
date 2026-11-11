@@ -7,14 +7,18 @@ public class CategoryConstant {
     public static final String CATEGORY_NOT_FOUND = "Không tìm thấy danh mục.";
     public static final String CATEGORY_ID_ALREADY_EXISTS = "Mã danh mục đã tồn tại.";
     public static final String CATEGORY_HAS_CHILDREN = "Không thể xóa danh mục vì vẫn còn danh mục con.";
+    public static final String CATEGORY_HAS_PRODUCTS = "Không thể xóa danh mục vì vẫn còn sản phẩm thuộc danh mục này.";
     public static final String CATEGORY_CREATED_SUCCESS = "Tạo danh mục thành công.";
     public static final String CATEGORY_UPDATED_SUCCESS = "Cập nhật danh mục thành công.";
     public static final String CATEGORY_DELETED_SUCCESS = "Xóa danh mục thành công.";
     public static final String CATEGORIES_FETCHED_SUCCESS = "Lấy danh sách danh mục thành công.";
     public static final String CATEGORY_FETCHED_SUCCESS = "Lấy thông tin danh mục thành công.";
+    public static final String ADMIN_GET_CATEGORIES_SUCCESS = "Lấy danh sách danh mục cho quản trị viên thành công.";
+    public static final String ADMIN_GET_CATEGORY_DETAIL_SUCCESS = "Lấy thông tin chi tiết danh mục thành công.";
 
     // Validation messages
     public static final String CATEGORY_NAME_REQUIRED = "Tên danh mục không được để trống.";
     public static final String CATEGORY_ID_REQUIRED = "Mã danh mục (slug) không được để trống.";
     public static final String CATEGORY_LEVEL_REQUIRED = "Cấp độ phân cấp không được để trống.";
+    public static final String INVALID_COMMISSION_RATE = "Tỷ lệ hoa hồng phải nằm trong khoảng từ 0% đến 100%.";
 }

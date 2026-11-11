@@ -18,6 +18,7 @@ public class CategoryMapper {
         dto.setName(category.getName());
         dto.setCategoryId(category.getCategoryId());
         dto.setLevel(category.getLevel());
+        dto.setCommissionRate(category.getCommissionRate());
         if (category.getParentCategory() != null) {
             dto.setParentCategoryId(category.getParentCategory().getId());
         }

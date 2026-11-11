@@ -39,6 +39,8 @@ public class AddToCartCommandHandler {
         Product product = productRepository.findById(command.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
 
+        cartValidationService.validateSellerActiveForProduct(product);
+
         if (product.getSeller().getUser().getUserId().equals(command.getUserId())) {
             throw new IllegalStateException(CartConstant.CANNOT_ADD_OWN_PRODUCT);
         }

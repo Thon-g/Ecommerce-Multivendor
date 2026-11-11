@@ -2,20 +2,19 @@ package com.abs.app.presentation.controller.admin;
 
 import com.abs.app.application.admin.sellermanager.command.UpdateSellerAccountStatusCommand;
 import com.abs.app.application.admin.sellermanager.command.UpdateSellerAccountStatusCommandHandler;
-import com.abs.app.application.admin.sellermanager.query.GetAllSellersQuery;
-import com.abs.app.application.admin.sellermanager.query.GetAllSellersQueryHandler;
+import com.abs.app.application.admin.sellermanager.dto.AdminSellerDetailResponseDto;
+import com.abs.app.application.admin.sellermanager.query.*;
+import com.abs.app.application.publicapi.product.dto.ProductResponseDto;
 import com.abs.app.application.seller.profile.dto.SellerResponseDto;
+import com.abs.app.application.seller.report.dto.SellerReportResponseDto;
 import com.abs.app.common.constant.SellerConstant;
 import com.abs.app.common.response.ApiResponse;
+import com.abs.app.common.response.PageResponse;
 import com.abs.app.domain.entity.enums.SellerStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import com.abs.app.common.response.PageResponse;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/admin/sellers")
@@ -24,6 +23,9 @@ import java.util.List;
 public class AdminSellerController {
 
     private final GetAllSellersQueryHandler getAllSellersQueryHandler;
+    private final GetAdminSellerDetailQueryHandler getAdminSellerDetailQueryHandler;
+    private final GetAdminSellerReportQueryHandler getAdminSellerReportQueryHandler;
+    private final GetAdminSellerProductsQueryHandler getAdminSellerProductsQueryHandler;
     private final UpdateSellerAccountStatusCommandHandler updateSellerAccountStatusCommandHandler;
 
     @GetMapping
@@ -35,6 +37,31 @@ public class AdminSellerController {
         
         PageResponse<SellerResponseDto> response = getAllSellersQueryHandler.handle(new GetAllSellersQuery(keyword, status, page, size));
         return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.ADMIN_GET_SELLERS_SUCCESS, response));
+    }
+
+    @GetMapping("/{sellerId}")
+    public ResponseEntity<ApiResponse<AdminSellerDetailResponseDto>> getSellerDetail(@PathVariable String sellerId) {
+        AdminSellerDetailResponseDto response = getAdminSellerDetailQueryHandler.handle(new GetAdminSellerDetailQuery(sellerId));
+        return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.ADMIN_GET_SELLER_DETAIL_SUCCESS, response));
+    }
+
+    @GetMapping("/{sellerId}/report")
+    public ResponseEntity<ApiResponse<SellerReportResponseDto>> getSellerReport(@PathVariable String sellerId) {
+        SellerReportResponseDto response = getAdminSellerReportQueryHandler.handle(new GetAdminSellerReportQuery(sellerId));
+        return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.ADMIN_GET_SELLER_REPORT_SUCCESS, response));
+    }
+
+    @GetMapping("/{sellerId}/products")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponseDto>>> getSellerProducts(
+            @PathVariable String sellerId,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        PageResponse<ProductResponseDto> response = getAdminSellerProductsQueryHandler.handle(
+                new GetAdminSellerProductsQuery(sellerId, keyword, page, size)
+        );
+        return ResponseEntity.ok(new ApiResponse<>(true, SellerConstant.ADMIN_GET_SELLER_PRODUCTS_SUCCESS, response));
     }
 
     @PatchMapping("/{sellerId}/status")

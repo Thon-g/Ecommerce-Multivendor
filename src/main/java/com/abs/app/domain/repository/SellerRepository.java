@@ -20,4 +20,6 @@ public interface SellerRepository {
     Page<Seller> findByStatus(SellerStatus status, Pageable pageable);
 
     Page<Seller> search(String keyword, SellerStatus status, Pageable pageable);
+
+    long count();
 }

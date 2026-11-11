@@ -23,4 +23,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     public Page<Transaction> findBySellerId(String sellerId, Pageable pageable) {
         return jpaRepository.findBySeller_SellerId(sellerId, pageable);
     }
+
+    @Override
+    public Page<Transaction> findAll(Pageable pageable) {
+        return jpaRepository.findAll(pageable);
+    }
 }
