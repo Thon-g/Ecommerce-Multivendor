@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SellerResponseDto {
     private String sellerId;
+    private String shopName;
     private String businessName;
     private String businessEmail;
     private String businessPhone;

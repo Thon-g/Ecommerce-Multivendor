@@ -26,10 +26,15 @@ public class CreateCategoryCommandHandler {
             throw new BusinessException(CategoryConstant.CATEGORY_ID_ALREADY_EXISTS);
         }
 
+        if (command.getCommissionRate() != null && (command.getCommissionRate() < 0.0 || command.getCommissionRate() > 100.0)) {
+            throw new BusinessException(CategoryConstant.INVALID_COMMISSION_RATE);
+        }
+
         Category category = new Category();
         category.setId(GenerateIdUtil.GenerateId());
         category.setName(command.getName());
         category.setCategoryId(command.getCategoryId());
+        category.setCommissionRate(command.getCommissionRate());
         
         if (command.getParentCategoryId() != null && !command.getParentCategoryId().isBlank()) {
             Category parent = categoryRepository.findById(command.getParentCategoryId())

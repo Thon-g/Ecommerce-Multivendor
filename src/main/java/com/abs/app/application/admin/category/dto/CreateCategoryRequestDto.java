@@ -1,8 +1,9 @@
 package com.abs.app.application.admin.category.dto;
 
 import com.abs.app.common.constant.CategoryConstant;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,8 @@ public class CreateCategoryRequestDto {
     private String categoryId;
 
     private String parentCategoryId;
+
+    @DecimalMin(value = "0.0", message = CategoryConstant.INVALID_COMMISSION_RATE)
+    @DecimalMax(value = "100.0", message = CategoryConstant.INVALID_COMMISSION_RATE)
+    private Double commissionRate;
 }

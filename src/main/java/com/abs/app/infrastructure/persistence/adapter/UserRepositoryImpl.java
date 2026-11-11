@@ -1,9 +1,12 @@
 package com.abs.app.infrastructure.persistence.adapter;
 
 import com.abs.app.domain.entity.User;
+import com.abs.app.domain.entity.enums.UserStatus;
 import com.abs.app.domain.repository.UserRepository;
 import com.abs.app.infrastructure.persistence.jpa.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +50,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public long count() {
         return userJpaRepository.count();
+    }
+
+    @Override
+    public Page<User> search(String keyword, UserStatus status, Pageable pageable) {
+        return userJpaRepository.search(keyword, status, pageable);
     }
 }

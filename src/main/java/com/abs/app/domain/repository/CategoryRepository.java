@@ -11,6 +11,7 @@ public interface CategoryRepository {
     Optional<Category> findById(String id);
     Optional<Category> findByCategoryId(String categoryId);
     Page<Category> search(String keyword, Pageable pageable);
+    Page<Category> search(String keyword, Integer level, Pageable pageable);
     Page<Category> findByParentCategoryId(String parentId, Pageable pageable);
     void delete(Category category);
     boolean existsByCategoryId(String categoryId);

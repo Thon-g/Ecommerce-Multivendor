@@ -3,6 +3,7 @@ package com.abs.app.common.constant;
 public class OrderConstant {
     public static final String ORDER_NOT_FOUND = "Không tìm thấy đơn hàng.";
     public static final String OUT_OF_STOCK = "Sản phẩm '%s' đã hết hàng hoặc số lượng yêu cầu vượt quá tồn kho hiện tại.";
+    public static final String SELLER_NOT_ACTIVE = "Sản phẩm '%s' thuộc gian hàng '%s' hiện không thể đặt do gian hàng đang tạm ngưng hoạt động hoặc đã bị khóa. Vui lòng xóa khỏi giỏ để tiếp tục.";
     public static final String CART_EMPTY = "Giỏ hàng của bạn đang trống, không thể thanh toán.";
     public static final String CHECKOUT_SUCCESS = "Đặt hàng thành công.";
     public static final String INVALID_ADDRESS = "Địa chỉ giao hàng không hợp lệ.";

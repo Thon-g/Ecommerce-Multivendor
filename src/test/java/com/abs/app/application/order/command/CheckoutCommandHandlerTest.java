@@ -7,6 +7,7 @@ import com.abs.app.application.category.CategoryService;
 import com.abs.app.domain.entity.*;
 import com.abs.app.domain.entity.enums.PaymentOrderStatus;
 import com.abs.app.domain.repository.*;
+import com.abs.app.domain.service.CartValidationService;
 import com.abs.app.domain.service.StockCacheService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,8 @@ class CheckoutCommandHandlerTest {
     private CategoryService categoryService;
     @Mock
     private StockCacheService stockCacheService;
+    @Mock
+    private CartValidationService cartValidationService;
 
     @InjectMocks
     private CheckoutCommandHandler checkoutCommandHandler;

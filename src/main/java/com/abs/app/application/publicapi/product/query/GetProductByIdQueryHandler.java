@@ -5,6 +5,7 @@ import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.repository.ProductRepository;
+import com.abs.app.domain.service.SellerService;
 import com.abs.app.infrastructure.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class GetProductByIdQueryHandler {
 
     private final ProductRepository productRepository;
+    private final SellerService sellerService;
 
     @Transactional(readOnly = true)
     public ProductResponseDto handle(GetProductByIdQuery query) {
         Product product = productRepository.findById(query.getId())
                 .orElseThrow(() -> new ResourceNotFoundException(ProductConstant.PRODUCT_NOT_FOUND));
+
+        sellerService.validateSellerActive(product.getSeller());
 
         return ProductMapper.toProductResponseDto(product);
     }

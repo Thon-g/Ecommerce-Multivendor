@@ -14,5 +14,8 @@ public interface ProductRepository {
     Page<Product> searchByCategoryIdIn(String keyword, List<String> categoryIds, String sellerId, Pageable pageable);
     Page<Product> findByCategoryId(String categoryId, Pageable pageable);
     Page<Product> findBySellerId(String sellerId, Pageable pageable);
+    Page<Product> findBySellerIdAndKeyword(String sellerId, String keyword, Pageable pageable);
+    long countBySellerId(String sellerId);
     void delete(Product product);
+    boolean existsByCategoryId(String categoryId);
 }

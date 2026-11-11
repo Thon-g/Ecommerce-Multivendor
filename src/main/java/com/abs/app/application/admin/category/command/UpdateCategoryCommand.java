@@ -12,4 +12,5 @@ import lombok.Setter;
 public class UpdateCategoryCommand {
     private String id;
     private String name;
+    private Double commissionRate;
 }

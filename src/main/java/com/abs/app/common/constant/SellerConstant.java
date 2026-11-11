@@ -43,5 +43,9 @@ public class SellerConstant {
 
     public static final String ADMIN_UPDATE_SELLER_STATUS_SUCCESS = "Cập nhật trạng thái gian hàng thành công.";
     public static final String ADMIN_GET_SELLERS_SUCCESS = "Lấy danh sách gian hàng thành công.";
+    public static final String ADMIN_GET_SELLER_DETAIL_SUCCESS = "Lấy thông tin chi tiết gian hàng thành công.";
+    public static final String ADMIN_GET_SELLER_REPORT_SUCCESS = "Lấy báo cáo hoạt động gian hàng thành công.";
+    public static final String ADMIN_GET_SELLER_PRODUCTS_SUCCESS = "Lấy danh sách sản phẩm của gian hàng thành công.";
+    public static final String SELLER_ID_REQUIRED = "Mã gian hàng không được để trống";
     public static final String INVALID_STATUS_TRANSITION = "Không thể chuyển trạng thái gian hàng từ %s sang %s.";
 }

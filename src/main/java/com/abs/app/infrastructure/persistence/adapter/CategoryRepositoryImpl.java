@@ -37,6 +37,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
+    public Page<Category> search(String keyword, Integer level, Pageable pageable) {
+        return categoryJpaRepository.search(keyword, level, pageable);
+    }
+
+    @Override
     public Page<Category> findByParentCategoryId(String parentId, Pageable pageable) {
         return categoryJpaRepository.findByParentCategoryId(parentId, pageable);
     }

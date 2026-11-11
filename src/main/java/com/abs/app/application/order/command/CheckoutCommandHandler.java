@@ -11,6 +11,7 @@ import com.abs.app.domain.entity.enums.PaymentMethod;
 import com.abs.app.domain.entity.enums.PaymentOrderStatus;
 import com.abs.app.domain.entity.enums.PaymentStatus;
 import com.abs.app.domain.repository.*;
+import com.abs.app.domain.service.CartValidationService;
 import com.abs.app.domain.service.StockCacheService;
 import com.abs.app.application.category.CategoryService;
 import com.abs.app.infrastructure.mapper.OrderMapper;
@@ -35,6 +36,7 @@ public class CheckoutCommandHandler {
     private final PaymentOrderRepository paymentOrderRepository;
     private final CategoryService categoryService;
     private final StockCacheService stockCacheService;
+    private final CartValidationService cartValidationService;
 
     @Transactional
     public PaymentOrderResponseDto handle(CheckoutCommand command) {
@@ -44,6 +46,8 @@ public class CheckoutCommandHandler {
         if (cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
             throw new BusinessException(OrderConstant.CART_EMPTY);
         }
+
+        cartValidationService.validateCartItemsForCheckout(cart.getCartItems());
 
         Address address = addressRepository.findById(command.getAddressId())
                 .orElseThrow(() -> new BusinessException(OrderConstant.INVALID_ADDRESS));

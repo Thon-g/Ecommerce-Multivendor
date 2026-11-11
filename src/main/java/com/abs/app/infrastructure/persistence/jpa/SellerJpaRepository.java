@@ -22,7 +22,10 @@ public interface SellerJpaRepository extends JpaRepository<Seller, String> {
         SELECT s FROM Seller s 
         WHERE (:keyword IS NULL OR :keyword = '' 
             OR LOWER(s.shopName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-            OR LOWER(s.businessDetails.businessName) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            OR LOWER(s.businessDetails.businessName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(s.businessDetails.businessEmail) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(s.businessDetails.businessPhone) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(s.sellerId) LIKE LOWER(CONCAT('%', :keyword, '%')))
         AND (:status IS NULL OR s.status = :status)
     """)
     Page<Seller> search(

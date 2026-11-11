@@ -6,6 +6,7 @@ import com.abs.app.application.user.cart.dto.CartResponseDto;
 import com.abs.app.domain.entity.Cart;
 import com.abs.app.domain.entity.CartItem;
 import com.abs.app.domain.entity.ProductSku;
+import com.abs.app.domain.entity.enums.SellerStatus;
 
 import java.util.stream.Collectors;
 
@@ -47,6 +48,12 @@ public class CartMapper {
         dto.setMrpPrice(cartItem.getMrpPrice());
         dto.setSellingPrice(cartItem.getSellingPrice());
         dto.setUserId(cartItem.getUserId());
+
+        boolean isAvailable = cartItem.getProduct() != null
+                && cartItem.getProduct().getSeller() != null
+                && cartItem.getProduct().getSeller().getStatus() == SellerStatus.ACTIVE;
+        dto.setAvailable(isAvailable);
+
         return dto;
     }
 }

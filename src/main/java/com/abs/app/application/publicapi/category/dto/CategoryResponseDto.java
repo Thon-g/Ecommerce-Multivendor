@@ -18,5 +18,6 @@ public class CategoryResponseDto {
     private String categoryId;
     private String parentCategoryId;
     private Integer level;
+    private Double commissionRate;
     private List<CategoryResponseDto> children = new ArrayList<>();
 }

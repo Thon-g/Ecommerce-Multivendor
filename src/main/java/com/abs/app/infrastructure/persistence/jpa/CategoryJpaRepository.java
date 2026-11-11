@@ -23,4 +23,13 @@ public interface CategoryJpaRepository extends JpaRepository<Category, String> {
                 OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%')))
             """)
     Page<Category> search(@Param("keyword") String keyword, Pageable pageable);
+
+    @Query("""
+            SELECT c FROM Category c 
+            WHERE (:keyword IS NULL OR :keyword = '' 
+                OR LOWER(c.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                OR LOWER(c.categoryId) LIKE LOWER(CONCAT('%', :keyword, '%')))
+            AND (:level IS NULL OR c.level = :level)
+            """)
+    Page<Category> search(@Param("keyword") String keyword, @Param("level") Integer level, Pageable pageable);
 }

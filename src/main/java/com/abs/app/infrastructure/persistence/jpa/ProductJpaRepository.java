@@ -13,11 +13,25 @@ import java.util.List;
 @Repository
 public interface ProductJpaRepository extends JpaRepository<Product, String> {
     Page<Product> findBySeller_SellerId(String sellerId, Pageable pageable);
-    Page<Product> findByCategory_CategoryId(String categoryId, Pageable pageable);
+    Page<Product> findByCategory_CategoryIdAndSeller_Status(String categoryId, com.abs.app.domain.entity.enums.SellerStatus status, Pageable pageable);
+    boolean existsByCategory_Id(String categoryId);
+    long countBySeller_SellerId(String sellerId);
 
     @Query("""
         SELECT p FROM Product p 
-        WHERE (:keyword IS NULL OR :keyword = '' 
+        WHERE p.seller.sellerId = :sellerId
+        AND (:keyword IS NULL OR :keyword = '' 
+            OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+    """)
+    Page<Product> findBySellerIdAndKeyword(
+            @Param("sellerId") String sellerId,
+            @Param("keyword") String keyword,
+            Pageable pageable);
+
+    @Query("""
+        SELECT p FROM Product p 
+        WHERE p.seller.status = com.abs.app.domain.entity.enums.SellerStatus.ACTIVE
+        AND (:keyword IS NULL OR :keyword = '' 
             OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
         AND (:categoryId IS NULL OR :categoryId = '' OR p.category.categoryId = :categoryId)
         AND (:sellerId IS NULL OR :sellerId = '' OR p.seller.sellerId = :sellerId)
@@ -30,7 +44,8 @@ public interface ProductJpaRepository extends JpaRepository<Product, String> {
 
     @Query("""
         SELECT p FROM Product p 
-        WHERE (:keyword IS NULL OR :keyword = '' 
+        WHERE p.seller.status = com.abs.app.domain.entity.enums.SellerStatus.ACTIVE
+        AND (:keyword IS NULL OR :keyword = '' 
             OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
         AND (COALESCE(:categoryIds, NULL) IS NULL OR p.category.categoryId IN :categoryIds)
         AND (:sellerId IS NULL OR :sellerId = '' OR p.seller.sellerId = :sellerId)

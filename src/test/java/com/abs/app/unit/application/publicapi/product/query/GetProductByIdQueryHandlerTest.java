@@ -7,6 +7,9 @@ import com.abs.app.common.constant.ProductConstant;
 import com.abs.app.common.exception.ResourceNotFoundException;
 import com.abs.app.domain.entity.Product;
 import com.abs.app.domain.repository.ProductRepository;
+import com.abs.app.domain.entity.Seller;
+import com.abs.app.domain.entity.enums.SellerStatus;
+import com.abs.app.domain.service.SellerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,9 @@ class GetProductByIdQueryHandlerTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private SellerService sellerService;
+
     @InjectMocks
     private GetProductByIdQueryHandler handler;
 
@@ -40,6 +46,10 @@ class GetProductByIdQueryHandlerTest {
         mockProduct = new Product();
         mockProduct.setId("PRODUCT_ID");
         mockProduct.setTitle("T-Shirt");
+
+        Seller mockSeller = new Seller();
+        mockSeller.setStatus(SellerStatus.ACTIVE);
+        mockProduct.setSeller(mockSeller);
     }
 
     @Test
