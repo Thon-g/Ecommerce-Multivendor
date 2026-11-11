@@ -49,6 +49,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    public Page<Product> findBySellerIdAndKeyword(String sellerId, String keyword, Pageable pageable) {
+        return productJpaRepository.findBySellerIdAndKeyword(sellerId, keyword, pageable);
+    }
+
+    @Override
+    public long countBySellerId(String sellerId) {
+        return productJpaRepository.countBySeller_SellerId(sellerId);
+    }
+
+    @Override
     public void delete(Product product) {
         productJpaRepository.delete(product);
     }

@@ -15,6 +15,18 @@ public interface ProductJpaRepository extends JpaRepository<Product, String> {
     Page<Product> findBySeller_SellerId(String sellerId, Pageable pageable);
     Page<Product> findByCategory_CategoryIdAndSeller_Status(String categoryId, com.abs.app.domain.entity.enums.SellerStatus status, Pageable pageable);
     boolean existsByCategory_Id(String categoryId);
+    long countBySeller_SellerId(String sellerId);
+
+    @Query("""
+        SELECT p FROM Product p 
+        WHERE p.seller.sellerId = :sellerId
+        AND (:keyword IS NULL OR :keyword = '' 
+            OR LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')))
+    """)
+    Page<Product> findBySellerIdAndKeyword(
+            @Param("sellerId") String sellerId,
+            @Param("keyword") String keyword,
+            Pageable pageable);
 
     @Query("""
         SELECT p FROM Product p 
