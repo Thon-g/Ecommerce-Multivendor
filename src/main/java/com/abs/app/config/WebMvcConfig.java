@@ -1,4 +1,4 @@
-package com.abs.app.infrastructure.config;
+package com.abs.app.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
