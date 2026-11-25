@@ -60,4 +60,25 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     public boolean existsByParentCategoryId(String parentId) {
         return categoryJpaRepository.existsByParentCategoryId(parentId);
     }
+
+    @Override
+    public java.util.List<Category> findAll() {
+        return categoryJpaRepository.findAllWithParent();
+    }
+
+    @Override
+    public java.util.List<Category> findAllByIdIn(java.util.List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return java.util.List.of();
+        }
+        return categoryJpaRepository.findAllByIdIn(ids);
+    }
+
+    @Override
+    public java.util.List<Category> findAllByCategoryIdIn(java.util.List<String> categoryIds) {
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return java.util.List.of();
+        }
+        return categoryJpaRepository.findAllByCategoryIdIn(categoryIds);
+    }
 }

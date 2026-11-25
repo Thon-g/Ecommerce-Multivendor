@@ -18,4 +18,6 @@ public interface ProductRepository {
     long countBySellerId(String sellerId);
     void delete(Product product);
     boolean existsByCategoryId(String categoryId);
+    List<Product> findAllActiveProductsWithStock();
+    List<Product> findAllByIdIn(List<String> ids);
 }

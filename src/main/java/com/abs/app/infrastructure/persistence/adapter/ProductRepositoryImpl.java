@@ -67,4 +67,14 @@ public class ProductRepositoryImpl implements ProductRepository {
     public boolean existsByCategoryId(String categoryId) {
         return productJpaRepository.existsByCategory_Id(categoryId);
     }
+
+    @Override
+    public List<Product> findAllActiveProductsWithStock() {
+        return productJpaRepository.findAllActiveProductsWithStock();
+    }
+
+    @Override
+    public List<Product> findAllByIdIn(List<String> ids) {
+        return productJpaRepository.findAllByIdIn(ids);
+    }
 }
