@@ -16,4 +16,7 @@ public interface CategoryRepository {
     void delete(Category category);
     boolean existsByCategoryId(String categoryId);
     boolean existsByParentCategoryId(String parentId);
+    java.util.List<Category> findAll();
+    java.util.List<Category> findAllByIdIn(java.util.List<String> ids);
+    java.util.List<Category> findAllByCategoryIdIn(java.util.List<String> categoryIds);
 }

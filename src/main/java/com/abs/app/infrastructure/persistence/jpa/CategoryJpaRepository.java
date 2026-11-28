@@ -32,4 +32,13 @@ public interface CategoryJpaRepository extends JpaRepository<Category, String> {
             AND (:level IS NULL OR c.level = :level)
             """)
     Page<Category> search(@Param("keyword") String keyword, @Param("level") Integer level, Pageable pageable);
+
+    @Query("SELECT c FROM Category c LEFT JOIN FETCH c.parentCategory")
+    java.util.List<Category> findAllWithParent();
+
+    @Query("SELECT c FROM Category c WHERE c.id IN :ids")
+    java.util.List<Category> findAllByIdIn(@Param("ids") java.util.List<String> ids);
+
+    @Query("SELECT c FROM Category c WHERE c.categoryId IN :categoryIds")
+    java.util.List<Category> findAllByCategoryIdIn(@Param("categoryIds") java.util.List<String> categoryIds);
 }

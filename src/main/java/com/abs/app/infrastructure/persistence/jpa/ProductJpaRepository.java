@@ -55,4 +55,30 @@ public interface ProductJpaRepository extends JpaRepository<Product, String> {
             @Param("categoryIds") List<String> categoryIds, 
             @Param("sellerId") String sellerId,
             Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT p FROM Product p
+        LEFT JOIN FETCH p.category
+        LEFT JOIN FETCH p.seller
+        LEFT JOIN FETCH p.skus s
+        WHERE p.seller.status = com.abs.app.domain.entity.enums.SellerStatus.ACTIVE
+        AND s.quantity > 0
+    """)
+    List<Product> findAllActiveProductsWithStock();
+
+    @Query("""
+        SELECT DISTINCT p FROM Product p
+        LEFT JOIN FETCH p.category
+        LEFT JOIN FETCH p.seller
+        LEFT JOIN FETCH p.images
+        WHERE p.id IN :ids
+    """)
+    List<Product> findAllWithImagesByIdIn(@Param("ids") List<String> ids);
+
+    @Query("""
+        SELECT DISTINCT p FROM Product p
+        LEFT JOIN FETCH p.skus
+        WHERE p.id IN :ids
+    """)
+    List<Product> findAllWithSkusByIdIn(@Param("ids") List<String> ids);
 }
