@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +75,16 @@ public class ProductRepositoryImpl implements ProductRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> findAllByIdIn(List<String> ids) {
-        return productJpaRepository.findAllByIdIn(ids);
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        List<Product> products = productJpaRepository.findAllWithImagesByIdIn(ids);
+        if (!products.isEmpty()) {
+            // Hydrate skus in a second query within the same session to avoid MultipleBagFetchException
+            productJpaRepository.findAllWithSkusByIdIn(ids);
+        }
+        return products;
     }
 }

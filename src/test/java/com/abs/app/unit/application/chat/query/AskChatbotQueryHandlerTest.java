@@ -3,9 +3,12 @@ package com.abs.app.unit.application.chat.query;
 import com.abs.app.application.chat.dto.ChatResponseDto;
 import com.abs.app.application.chat.query.AskChatbotQuery;
 import com.abs.app.application.chat.query.AskChatbotQueryHandler;
+import com.abs.app.common.constant.ChatConstant;
 import com.abs.app.domain.entity.*;
+import com.abs.app.domain.entity.enums.ChatSenderType;
 import com.abs.app.domain.entity.enums.SellerStatus;
 import com.abs.app.domain.model.AiChatResponse;
+import com.abs.app.domain.model.AiMessage;
 import com.abs.app.domain.model.GuestChatMessage;
 import com.abs.app.domain.repository.*;
 import com.abs.app.domain.service.AiChatService;
@@ -18,9 +21,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -204,5 +209,63 @@ class AskChatbotQueryHandlerTest {
 
         verify(chatMemoryService, times(2)).saveMessage(eq(guestSessionId), any(GuestChatMessage.class));
         verifyNoInteractions(chatMessageRepository);
+    }
+
+    @Test
+    @DisplayName("Should return polite offline message when AI provider fails")
+    void shouldReturnOfflineFallbackWhenAiProviderFails() {
+        when(chatMemoryService.getRecentMessages("guest-err", 6)).thenReturn(Collections.emptyList());
+        when(aiSearchService.searchRelevantContext(anyString(), eq(5))).thenReturn("Context");
+        when(aiChatService.generateResponse(anyString(), anyList(), anyString()))
+                .thenThrow(new RuntimeException("Provider timeout"));
+
+        AskChatbotQuery query = AskChatbotQuery.builder()
+                .guestSessionId("guest-err")
+                .message("Tư vấn sản phẩm")
+                .build();
+
+        ChatResponseDto response = handler.handle(query);
+
+        assertEquals(ChatConstant.DEFAULT_AI_OFFLINE_MESSAGE, response.getReply());
+        assertTrue(response.getProducts().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should limit user conversation history sent to LLM to last 6 messages (sliding window)")
+    void shouldApplySlidingWindowOfSixMessages() {
+        String userId = "user-window";
+        User user = new User();
+        user.setUserId(userId);
+        ChatSession session = ChatSession.builder().id("session-w").user(user).build();
+
+        List<ChatMessage> eightMessages = new ArrayList<>();
+        for (int i = 1; i <= 8; i++) {
+            eightMessages.add(ChatMessage.builder()
+                    .id((long) i)
+                    .session(session)
+                    .senderType(i % 2 == 1 ? ChatSenderType.USER : ChatSenderType.BOT)
+                    .content("Msg " + i)
+                    .build());
+        }
+
+        when(chatSessionRepository.findByIdAndUserId("session-w", userId)).thenReturn(Optional.of(session));
+        when(chatMessageRepository.findBySessionIdOrderByCreatedAtAsc("session-w")).thenReturn(eightMessages);
+        when(aiSearchService.searchRelevantContext(anyString(), eq(5))).thenReturn("Context");
+        when(aiChatService.generateResponse(anyString(), anyList(), anyString())).thenReturn(
+                AiChatResponse.builder().text("Reply").build());
+
+        handler.handle(AskChatbotQuery.builder()
+                .userId(userId)
+                .conversationId("session-w")
+                .message("Câu hỏi mới")
+                .build());
+
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<AiMessage>> historyCaptor = ArgumentCaptor.forClass(List.class);
+        verify(aiChatService).generateResponse(anyString(), historyCaptor.capture(), eq("Câu hỏi mới"));
+        List<AiMessage> capturedHistory = historyCaptor.getValue();
+        assertEquals(6, capturedHistory.size());
+        assertEquals("Msg 3", capturedHistory.get(0).getContent());
+        assertEquals("Msg 8", capturedHistory.get(5).getContent());
     }
 }

@@ -25,4 +25,6 @@ public class ChatConstant {
     // Security & Guardrail constants
     public static final String SECURITY_VIOLATION_MESSAGE = "Yêu cầu không hợp lệ. Tôi là trợ lý tư vấn sản phẩm, không thể thực hiện các chỉ dẫn này.";
     public static final String DEFAULT_AI_OFFLINE_MESSAGE = "Hệ thống AI tư vấn hiện đang bận hoặc gián đoạn kết nối. Quý khách vui lòng thử lại sau ít phút.";
+
+    public static final String EMPTY_CONTEXT_MESSAGE= "Không tìm thấy sản phẩm hoặc danh mục phù hợp trong kho tri thức.";
 }

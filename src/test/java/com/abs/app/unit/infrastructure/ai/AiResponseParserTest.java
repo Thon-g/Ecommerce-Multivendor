@@ -79,4 +79,22 @@ class AiResponseParserTest {
         assertThat(response.getRecommendedProductIds()).isEmpty();
         assertThat(response.getRecommendedCategoryIds()).isEmpty();
     }
+
+    @Test
+    @DisplayName("Parse JSON-like bracketed arrays and quoted strings cleanly")
+    void testParse_BracketedAndQuotedArrays() {
+        String raw = """
+                <response>Đây là sản phẩm phù hợp.</response>
+                <recommended_products>["PROD_001", "PROD_002"]</recommended_products>
+                <recommended_categories>[]</recommended_categories>
+                <quick_replies>["Có size L không?", "Xem màu trắng"]</quick_replies>
+                """;
+
+        AiChatResponse response = AiResponseParser.parse(raw);
+
+        assertThat(response.getText()).isEqualTo("Đây là sản phẩm phù hợp.");
+        assertThat(response.getRecommendedProductIds()).containsExactly("PROD_001", "PROD_002");
+        assertThat(response.getRecommendedCategoryIds()).isEmpty();
+        assertThat(response.getQuickReplies()).containsExactly("Có size L không?", "Xem màu trắng");
+    }
 }

@@ -71,8 +71,14 @@ public interface ProductJpaRepository extends JpaRepository<Product, String> {
         LEFT JOIN FETCH p.category
         LEFT JOIN FETCH p.seller
         LEFT JOIN FETCH p.images
+        WHERE p.id IN :ids
+    """)
+    List<Product> findAllWithImagesByIdIn(@Param("ids") List<String> ids);
+
+    @Query("""
+        SELECT DISTINCT p FROM Product p
         LEFT JOIN FETCH p.skus
         WHERE p.id IN :ids
     """)
-    List<Product> findAllByIdIn(@Param("ids") List<String> ids);
+    List<Product> findAllWithSkusByIdIn(@Param("ids") List<String> ids);
 }

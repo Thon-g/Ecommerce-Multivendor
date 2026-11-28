@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Pageable;
 
 @Getter
 @Setter
@@ -13,5 +12,6 @@ import org.springframework.data.domain.Pageable;
 public class GetChatHistoryQuery {
     private String sessionId;
     private String userId;
-    private Pageable pageable;
+    private int page;
+    private int limit;
 }

@@ -11,6 +11,7 @@ import org.springframework.security.config.Customizer;
 import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -49,6 +50,7 @@ public class SecurityConfig {
                                         "Access denied")))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/change-password").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/chat").permitAll()
                         .requestMatchers(
                                 "/auth/login",
                                 "/auth/register",

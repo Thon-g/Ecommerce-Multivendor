@@ -1,6 +1,6 @@
 package com.abs.app.infrastructure.mapper;
 
-import com.abs.app.application.dto.chat.*;
+import com.abs.app.application.chat.dto.*;
 import com.abs.app.domain.entity.Category;
 import com.abs.app.domain.entity.ChatMessage;
 import com.abs.app.domain.entity.ChatSession;

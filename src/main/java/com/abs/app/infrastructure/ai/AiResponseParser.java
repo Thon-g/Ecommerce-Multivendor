@@ -57,14 +57,27 @@ public class AiResponseParser {
         Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             String inside = matcher.group(1).trim();
+            if (inside.startsWith("[") && inside.endsWith("]")) {
+                inside = inside.substring(1, inside.length() - 1).trim();
+            }
             if (!inside.isBlank() && !inside.equalsIgnoreCase("NONE")) {
                 return Arrays.stream(inside.split("[,;\\n]"))
-                        .map(String::trim)
-                        .filter(s -> !s.isBlank())
+                        .map(AiResponseParser::cleanToken)
+                        .filter(s -> !s.isBlank() && !s.equalsIgnoreCase("NONE") && !s.equalsIgnoreCase("null"))
                         .distinct()
                         .collect(Collectors.toList());
             }
         }
         return new ArrayList<>();
+    }
+
+    private static String cleanToken(String raw) {
+        String s = raw.trim();
+        if ((s.startsWith("\"") && s.endsWith("\"")) || (s.startsWith("'") && s.endsWith("'"))) {
+            if (s.length() >= 2) {
+                s = s.substring(1, s.length() - 1).trim();
+            }
+        }
+        return s;
     }
 }

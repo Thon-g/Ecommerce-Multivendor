@@ -19,5 +19,15 @@ services:
     ports:
       - "6379:6379"
 
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: chromadb
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+
 volumes:
   mysql_data:
+  chroma_data:

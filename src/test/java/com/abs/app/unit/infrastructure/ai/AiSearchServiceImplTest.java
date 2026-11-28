@@ -42,8 +42,8 @@ class AiSearchServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should format product and category documents when search succeeds")
-    void shouldFormatRagContextWhenSearchSucceeds() {
+    @DisplayName("Should query products and categories independently and format RAG context")
+    void shouldFormatRagContextWithProductsAndCategories() {
         Document prodDoc = new Document("Áo polo cao cấp thoáng khí", Map.of(
                 VectorDocumentMapper.META_DOC_TYPE, VectorDocumentMapper.DOC_TYPE_PRODUCT,
                 VectorDocumentMapper.META_PRODUCT_ID, "prod-100",
@@ -63,7 +63,9 @@ class AiSearchServiceImplTest {
                 VectorDocumentMapper.META_LEVEL, 1
         ));
 
-        when(vectorStore.similaritySearch(any(SearchRequest.class))).thenReturn(List.of(prodDoc, catDoc));
+        when(vectorStore.similaritySearch(any(SearchRequest.class)))
+                .thenReturn(List.of(prodDoc))
+                .thenReturn(List.of(catDoc));
 
         String context = aiSearchService.searchRelevantContext("áo thun", 5);
 
@@ -72,6 +74,7 @@ class AiSearchServiceImplTest {
         assertTrue(context.contains("Shop Thoi Trang"));
         assertTrue(context.contains("250000đ"));
         assertTrue(context.contains("DANH MỤC: (ID: men-fashion) Thời trang nam"));
+        verify(vectorStore, times(2)).similaritySearch(any(SearchRequest.class));
     }
 
     @Test
